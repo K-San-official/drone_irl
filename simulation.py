@@ -26,6 +26,7 @@ def init_field():
 
 if __name__ == '__main__':
     field = init_field()
+    actions = ['up', 'down', 'left', 'right']
     current_pos = [9, 0]
 
     window = tk.Tk()
@@ -33,14 +34,34 @@ if __name__ == '__main__':
     # Create canvas
     canvas = tk.Canvas(window, bg='green', height=200, width=200)
     canvas.pack()
-    for i in range(len(field[0])):
-        for j in range(len(field)):
-            canvas.create_rectangle(20 * i, 20 * j, 20 * i + 19, 20 * j + 19, fill="green")
-    drone_cursor = canvas.create_oval(20 * current_pos[1],
-                                      20 * current_pos[0],
-                                      20 * current_pos[1] + 19,
-                                      20 * current_pos[0] + 19,
+    for i in range(len(field)):
+        for j in range(len(field[0])):
+            colour = 'green'
+            if field[i][j] == 1:
+                colour = 'yellow'
+            elif field[i][j] == 2:
+                colour = 'blue'
+            elif field[i][j] == 3:
+                colour = 'purple'
+            elif field[i][j] == 4:
+                colour = 'orange'
+            elif field[i][j] == 5:
+                colour = 'gray'
+
+            canvas.create_rectangle(20 * j,
+                                    20 * i,
+                                    20 * j + 19,
+                                    20 * i + 19,
+                                    fill=colour)
+    drone_cursor = canvas.create_oval(20 * current_pos[1] + 1,
+                                      20 * current_pos[0] + 1,
+                                      20 * current_pos[1] + 20,
+                                      20 * current_pos[0] + 20,
                                       fill='red')
+
+    def print_move(s_row, s_col, a):
+        print("S({},{}), A({})".format(s_row, s_col, a))
+
     def keypress(event):
         """
         Moves the drone (red circle) on the field when a button is pressed.
@@ -51,18 +72,22 @@ if __name__ == '__main__':
         y = 0
         if event.char == "a":
             x = -20
-            current_pos[1] += 1
+            print_move(current_pos[0], current_pos[1], actions[2])
+            current_pos[1] -= 1
         elif event.char == "d":
             x = 20
-            current_pos[1] -= 1
+            print_move(current_pos[0], current_pos[1], actions[3])
+            current_pos[1] += 1
         elif event.char == "w":
             y = -20
+            print_move(current_pos[0], current_pos[1], actions[0])
             current_pos[0] -= 1
         elif event.char == "s":
             y = 20
+            print_move(current_pos[0], current_pos[1], actions[1])
             current_pos[0] += 1
         canvas.move(drone_cursor, x, y)
-        print_move()
+
 
     window.bind("<Key>", keypress)
 
