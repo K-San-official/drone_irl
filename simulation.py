@@ -70,19 +70,19 @@ if __name__ == '__main__':
         """
         x = 0
         y = 0
-        if event.char == "a":
+        if event.char == "a" and current_pos[1] >= 1:
             x = -20
             print_move(current_pos[0], current_pos[1], actions[2])
             current_pos[1] -= 1
-        elif event.char == "d":
+        elif event.char == "d" and current_pos[1] <= 8:
             x = 20
             print_move(current_pos[0], current_pos[1], actions[3])
             current_pos[1] += 1
-        elif event.char == "w":
+        elif event.char == "w" and current_pos[0] >= 1:
             y = -20
             print_move(current_pos[0], current_pos[1], actions[0])
             current_pos[0] -= 1
-        elif event.char == "s":
+        elif event.char == "s" and current_pos[0] <= 8:
             y = 20
             print_move(current_pos[0], current_pos[1], actions[1])
             current_pos[0] += 1
