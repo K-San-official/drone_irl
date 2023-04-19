@@ -27,6 +27,7 @@ def init_field():
 if __name__ == '__main__':
     field = init_field()
     actions = ['up', 'down', 'left', 'right']
+    state_action_list = []
     current_pos = [9, 0]
 
     window = tk.Tk()
@@ -73,25 +74,37 @@ if __name__ == '__main__':
         if event.char == "a" and current_pos[1] >= 1:
             x = -20
             print_move(current_pos[0], current_pos[1], actions[2])
+            state_action_list.append("{},{},{}\n".format(current_pos[0], current_pos[1], actions[2]))
             current_pos[1] -= 1
         elif event.char == "d" and current_pos[1] <= 8:
             x = 20
             print_move(current_pos[0], current_pos[1], actions[3])
+            state_action_list.append("{},{},{}\n".format(current_pos[0], current_pos[1], actions[3]))
             current_pos[1] += 1
         elif event.char == "w" and current_pos[0] >= 1:
             y = -20
             print_move(current_pos[0], current_pos[1], actions[0])
+            state_action_list.append("{},{},{}\n".format(current_pos[0], current_pos[1], actions[0]))
             current_pos[0] -= 1
         elif event.char == "s" and current_pos[0] <= 8:
             y = 20
             print_move(current_pos[0], current_pos[1], actions[1])
+            state_action_list.append("{},{},{}\n".format(current_pos[0], current_pos[1], actions[1]))
             current_pos[0] += 1
         canvas.move(drone_cursor, x, y)
 
-
     window.bind("<Key>", keypress)
 
+    def save_simulation_run():
+        file = open("simulation_runs/log.txt", "w")
+        for e in state_action_list:
+            file.write(e)
+        file.close()
+        window.destroy()
 
+    save_button = tk.Button(window, text="Save", command=save_simulation_run)
+    save_button.pack()
 
     window.mainloop()
+
 
