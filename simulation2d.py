@@ -10,5 +10,8 @@ if __name__ == '__main__':
     discount = 0.9
 
     dw = DroneWorld(size, n_people, n_obstacles, discount)
-    gui = tk.Tk()
-    gui.geometry
+    root = tk.Tk()
+    root.geometry('{}x{}'.format(size * 10 + 100, size * 10 + 100))
+    canvas = tk.Canvas(root, bg='green', height=size*10, width=size*10)
+    canvas.pack()
+    root.mainloop()
