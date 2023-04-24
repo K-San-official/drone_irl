@@ -3,8 +3,10 @@ import numpy as np
 class DroneWorld:
     def __init__(self, size, n_people, n_obst, discount):
 
-        # World configuration
-        self.forward_step = 0.2
+        # Simulation onfiguration
+        self.forward_step = 5  # Moves 0.2 steps forward
+        self.angle_step = 10  # Moves 20 degrees for every turn
+        self.sensor_length = 100
 
         # Define actions (forward, left, right)
         self.actions = ((1, 0), (1, -1), (1, 1))
@@ -20,6 +22,7 @@ class DroneWorld:
         # Set random starting position
         self.starting_pos = self.get_random_location()
         self.current_pos = self.starting_pos
+        self.current_angle = 0
 
         # Set state (as a list of features)
 
@@ -28,13 +31,23 @@ class DroneWorld:
         y_r = np.random.rand() * self.size
         return (x_r, y_r)
 
-    def update_drone_location(self, action): # Updates the drone location for a certain action
+    def update_drone_location(self, action):  # Updates the drone location for a certain action
         if action == 'w':
-            self.current_pos = (self.current_pos[0] + self.forward_step, self.current_pos[1])
+            pass
         elif action == 'a':
-            pass
+            self.current_angle -= self.angle_step
+            if self.current_angle < 0:
+                self.current_angle += 360
         elif action == 'd':
-            pass
+            self.current_angle += self.angle_step
+            if self.current_angle > 359:
+                self.current_angle -= 360
+        (x, y) = self.current_pos
+        # Apply rotation matrix
+        x += (np.cos(self.current_angle * np.pi / 180) * self.forward_step)
+        y += (np.sin(self.current_angle * np.pi / 180) * self.forward_step)
+        self.current_pos = (x, y)
+        print("Drone Postion: {}, \t Angle: {}".format(self.current_pos, self.current_angle))
 
     def get_state(self):  # Gets the features out of the simulation
         pass

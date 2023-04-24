@@ -1,4 +1,5 @@
 import tkinter as tk
+import numpy as np
 from droneworld import DroneWorld
 
 
@@ -9,7 +10,7 @@ def get_circle_coordinates(x, y, r):
 
 if __name__ == '__main__':
     # Edit these variables to change the generation of the world:
-    size = 50
+    size = 500
     n_people = 5
     n_obstacles = 5
     discount = 0.9
@@ -19,18 +20,27 @@ if __name__ == '__main__':
 
     # Set up GUI
     root = tk.Tk()
-    root.geometry('{}x{}'.format(size * 10 + 100, size * 10 + 100))
-    canvas = tk.Canvas(root, bg='green', height=size*10, width=size*10)
+    root.geometry('{}x{}'.format(size + 100, size + 100))
+    canvas = tk.Canvas(root, bg='green', height=size, width=size)
     canvas.pack()
 
+    # Set up drone elements
     p = dw.starting_pos
     dr = 10  # Drone radius
     drone_sphere = canvas.create_oval(
-        (p[0] * 10) - dr,
-        (p[1] * 10) - dr,
-        (p[0] * 10) + dr,
-        (p[1] * 10) + dr,
+        (p[0]) - dr,
+        (p[1]) - dr,
+        (p[0]) + dr,
+        (p[1]) + dr,
         fill='red')
+
+    sensor0 = canvas.create_line(
+        p[0],
+        p[1],
+        p[0] + dw.sensor_length,
+        p[1],
+        fill='blue'
+    )
 
     def keypress(event):
         """
@@ -38,14 +48,19 @@ if __name__ == '__main__':
         :param event:
         :return:
         """
-        x = 0
-        y = 0
         dw.update_drone_location(event.char)
         new_pos = dw.current_pos
         canvas.moveto(
             drone_sphere,
-            (new_pos[0] * 10) - dr,
-            (new_pos[1] * 10) - dr,)
+            new_pos[0] - dr,
+            new_pos[1] - dr,)
+        canvas.coords(
+            sensor0,
+            new_pos[0],
+            new_pos[1],
+            new_pos[0] + (np.cos(dw.current_angle * np.pi / 180) * dw.sensor_length),
+            new_pos[1] + (np.sin(dw.current_angle * np.pi / 180) * dw.sensor_length)
+        )
 
 
     root.bind("<Key>", keypress)
