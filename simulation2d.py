@@ -34,13 +34,18 @@ if __name__ == '__main__':
         (p[1]) + dr,
         fill='red')
 
-    sensor0 = canvas.create_line(
-        p[0],
-        p[1],
-        p[0] + dw.sensor_length,
-        p[1],
-        fill='blue'
-    )
+    # Sensors
+    sensor_lines = []
+    for i in range(5):
+        angle_offset = (i - 2) * dw.sensor_spread
+        new_sensor = canvas.create_line(
+            p[0],
+            p[1],
+            p[0] + (np.cos(angle_offset * np.pi / 180) * dw.sensor_length),
+            p[1] + (np.sin(angle_offset * np.pi / 180) * dw.sensor_length),
+            fill='blue')
+        sensor_lines.append(new_sensor)
+
 
     def keypress(event):
         """
@@ -54,15 +59,15 @@ if __name__ == '__main__':
             drone_sphere,
             new_pos[0] - dr,
             new_pos[1] - dr,)
-        canvas.coords(
-            sensor0,
-            new_pos[0],
-            new_pos[1],
-            new_pos[0] + (np.cos(dw.current_angle * np.pi / 180) * dw.sensor_length),
-            new_pos[1] + (np.sin(dw.current_angle * np.pi / 180) * dw.sensor_length)
-        )
-
-
+        for i in range(len(sensor_lines)):
+            angle_offset = (i - 2) * dw.sensor_spread
+            canvas.coords(
+                sensor_lines[i],
+                new_pos[0],
+                new_pos[1],
+                new_pos[0] + (np.cos((dw.current_angle + angle_offset) * np.pi / 180) * dw.sensor_length),
+                new_pos[1] + (np.sin((dw.current_angle + angle_offset) * np.pi / 180) * dw.sensor_length)
+            )
     root.bind("<Key>", keypress)
 
     root.mainloop()

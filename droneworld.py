@@ -6,7 +6,8 @@ class DroneWorld:
         # Simulation onfiguration
         self.forward_step = 5  # Moves 0.2 steps forward
         self.angle_step = 10  # Moves 20 degrees for every turn
-        self.sensor_length = 100
+        self.sensor_length = 150
+        self.sensor_spread = 20  # Angle spread between sensors
 
         # Define actions (forward, left, right)
         self.actions = ((1, 0), (1, -1), (1, 1))
