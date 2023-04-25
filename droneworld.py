@@ -16,6 +16,7 @@ class DroneWorld:
 
         # Place people into the world (randomly)
         self.people = []
+        self.p_radius = 10  # Radius of circles representing people
         for i in range(n_people):
             self.people.append(self.get_random_location())
 
@@ -33,6 +34,7 @@ class DroneWorld:
         self.current_angle = 0
 
         # Set state (as a list of features)
+        self.state = self.get_state()
 
     def get_random_location(self):
         x_r = np.random.rand() * self.size
@@ -55,10 +57,22 @@ class DroneWorld:
         x += (np.cos(self.current_angle * np.pi / 180) * self.forward_step)
         y += (np.sin(self.current_angle * np.pi / 180) * self.forward_step)
         self.current_pos = (x, y)
+        self.get_state()
         print("Drone Postion: {}, \t Angle: {}".format(self.current_pos, self.current_angle))
 
+    def get_min_person_dist(self):
+        min_dist = -1
+        for p in self.people:
+            dist = np.linalg.norm(np.array(p) - np.array(self.current_pos))
+            if dist < min_dist or min_dist == -1:
+                min_dist = dist
+        return min_dist
+
     def get_state(self):  # Gets the features out of the simulation
-        pass
+        features = [0] * 7
+        features[6] = self.get_min_person_dist()
+        return features
+
 
     def __str__(self):
         pass

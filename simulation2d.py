@@ -20,20 +20,19 @@ if __name__ == '__main__':
 
     # Set up GUI
     root = tk.Tk()
-    root.geometry('{}x{}'.format(size + 100, size + 100))
+    root.geometry('{}x{}'.format(size + 200, size + 200))
     canvas = tk.Canvas(root, bg='green', height=size, width=size)
-    canvas.pack()
+    canvas.pack(side=tk.LEFT)
 
     # --- Set up elements ---
 
     # People
-    p_radius = 10 # Radius of circles representing people
     for person in dw.people:
         canvas.create_oval(
-            person[0] - p_radius,
-            person[1] - p_radius,
-            person[0] + p_radius,
-            person[1] + p_radius,
+            person[0] - dw.p_radius,
+            person[1] - dw.p_radius,
+            person[0] + dw.p_radius,
+            person[1] + dw.p_radius,
             fill='purple'
         )
     # Obstacles
@@ -68,6 +67,18 @@ if __name__ == '__main__':
             fill='blue')
         sensor_lines.append(new_sensor)
 
+    # --- Text Area (for state features) ---
+    text_area = tk.Text(root, bg='white', height=20)
+    text_area.pack(side=tk.RIGHT, padx=10, pady=10)
+
+    def output_state():
+        # Prints the current simulation state onto the right text field as individual features
+        count = 1
+        for state_feature in dw.get_state():
+            text_area.insert(tk.INSERT, 's_{}: {}\n'.format(count, round(state_feature, 4)))
+            count += 1
+
+    output_state()
 
     def keypress(event):
         """
@@ -90,6 +101,9 @@ if __name__ == '__main__':
                 new_pos[0] + (np.cos((dw.current_angle + angle_offset) * np.pi / 180) * dw.sensor_length),
                 new_pos[1] + (np.sin((dw.current_angle + angle_offset) * np.pi / 180) * dw.sensor_length)
             )
+        text_area.delete('1.0', tk.END)
+        output_state()
+
     root.bind("<Key>", keypress)
 
     root.mainloop()
