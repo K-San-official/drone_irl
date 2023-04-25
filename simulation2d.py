@@ -24,20 +24,42 @@ if __name__ == '__main__':
     canvas = tk.Canvas(root, bg='green', height=size, width=size)
     canvas.pack()
 
-    # Set up drone elements
+    # --- Set up elements ---
+
+    # People
+    p_radius = 10 # Radius of circles representing people
+    for person in dw.people:
+        canvas.create_oval(
+            person[0] - p_radius,
+            person[1] - p_radius,
+            person[0] + p_radius,
+            person[1] + p_radius,
+            fill='purple'
+        )
+    # Obstacles
+    for obst in dw.obst:
+        canvas.create_rectangle(
+            obst[0],
+            obst[1],
+            obst[2],
+            obst[3],
+            fill='grey'
+        )
+
+    # Drone
     p = dw.starting_pos
     dr = 10  # Drone radius
     drone_sphere = canvas.create_oval(
-        (p[0]) - dr,
-        (p[1]) - dr,
-        (p[0]) + dr,
-        (p[1]) + dr,
+        p[0] - dr,
+        p[1] - dr,
+        p[0] + dr,
+        p[1] + dr,
         fill='red')
 
     # Sensors
     sensor_lines = []
-    for i in range(5):
-        angle_offset = (i - 2) * dw.sensor_spread
+    for i in range(dw.n_sensors):
+        angle_offset = (i - (dw.n_sensors // 2)) * dw.sensor_spread
         new_sensor = canvas.create_line(
             p[0],
             p[1],
@@ -60,7 +82,7 @@ if __name__ == '__main__':
             new_pos[0] - dr,
             new_pos[1] - dr,)
         for i in range(len(sensor_lines)):
-            angle_offset = (i - 2) * dw.sensor_spread
+            angle_offset = (i - (dw.n_sensors // 2)) * dw.sensor_spread
             canvas.coords(
                 sensor_lines[i],
                 new_pos[0],

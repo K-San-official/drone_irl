@@ -6,8 +6,9 @@ class DroneWorld:
         # Simulation onfiguration
         self.forward_step = 5  # Moves 0.2 steps forward
         self.angle_step = 10  # Moves 20 degrees for every turn
+        self.n_sensors = 7
         self.sensor_length = 150
-        self.sensor_spread = 20  # Angle spread between sensors
+        self.sensor_spread = 10  # Angle spread between sensors
 
         # Define actions (forward, left, right)
         self.actions = ((1, 0), (1, -1), (1, 1))
@@ -19,6 +20,12 @@ class DroneWorld:
             self.people.append(self.get_random_location())
 
         # Place obstacles into the world (randomly)
+        self.obst = []
+        for i in range(n_obst):
+            (x0, y0) = self.get_random_location()
+            x1 = x0 + (np.random.rand() * 90) + 10
+            y1 = y0 + (np.random.rand() * 90) + 10
+            self.obst.append((x0, y0, x1, y1))
 
         # Set random starting position
         self.starting_pos = self.get_random_location()
