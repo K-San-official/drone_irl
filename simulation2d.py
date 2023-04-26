@@ -74,7 +74,7 @@ if __name__ == '__main__':
     def output_state():
         # Prints the current simulation state onto the right text field as individual features
         count = 1
-        for state_feature in dw.get_state():
+        for state_feature in dw.state:
             text_area.insert(tk.INSERT, 's_{}: {}\n'.format(count, round(state_feature, 4)))
             count += 1
 
@@ -92,14 +92,13 @@ if __name__ == '__main__':
             drone_sphere,
             new_pos[0] - dr,
             new_pos[1] - dr,)
-        for i in range(len(sensor_lines)):
-            angle_offset = (i - (dw.n_sensors // 2)) * dw.sensor_spread
+        for i in range(dw.n_sensors):
             canvas.coords(
                 sensor_lines[i],
                 new_pos[0],
                 new_pos[1],
-                new_pos[0] + (np.cos((dw.current_angle + angle_offset) * np.pi / 180) * dw.sensor_length),
-                new_pos[1] + (np.sin((dw.current_angle + angle_offset) * np.pi / 180) * dw.sensor_length)
+                dw.obst_sensors[i][0],
+                dw.obst_sensors[i][1]
             )
         text_area.delete('1.0', tk.END)
         output_state()

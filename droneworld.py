@@ -3,12 +3,17 @@ import numpy as np
 class DroneWorld:
     def __init__(self, size, n_people, n_obst, discount):
 
-        # Simulation onfiguration
+        # Simulation configuration
         self.forward_step = 5  # Moves 0.2 steps forward
         self.angle_step = 10  # Moves 20 degrees for every turn
+
         self.n_sensors = 7
         self.sensor_length = 150
         self.sensor_spread = 10  # Angle spread between sensors
+        self.person_sensors = [(0, 0)] * self.n_sensors  # Tuple of (x1, y1) as an endpoint of each sensor
+        self.person_sensors_readings = [0] * self.n_sensors
+        self.obst_sensors = [(0, 0)] * self.n_sensors
+        self.obst_sensors_readings = [0] * self.n_sensors
 
         # Define actions (forward, left, right)
         self.actions = ((1, 0), (1, -1), (1, 1))
@@ -39,7 +44,7 @@ class DroneWorld:
     def get_random_location(self):
         x_r = np.random.rand() * self.size
         y_r = np.random.rand() * self.size
-        return (x_r, y_r)
+        return x_r, y_r
 
     def update_drone_location(self, action):  # Updates the drone location for a certain action
         if action == 'w':
@@ -57,7 +62,7 @@ class DroneWorld:
         x += (np.cos(self.current_angle * np.pi / 180) * self.forward_step)
         y += (np.sin(self.current_angle * np.pi / 180) * self.forward_step)
         self.current_pos = (x, y)
-        self.get_state()
+        self.state = self.get_state()
         print("Drone Postion: {}, \t Angle: {}".format(self.current_pos, self.current_angle))
 
     def get_min_person_dist(self):
@@ -68,8 +73,16 @@ class DroneWorld:
                 min_dist = dist
         return min_dist
 
+    def update_obst_sensors(self):
+        for i in range(len(self.obst_sensors)):
+            angle_offset = (i - (self.n_sensors // 2)) * self.sensor_spread
+            x1 = self.current_pos[0] + (np.cos((self.current_angle + angle_offset) * np.pi / 180) * self.sensor_length)
+            y1 = self.current_pos[1] + (np.sin((self.current_angle + angle_offset) * np.pi / 180) * self.sensor_length)
+            self.obst_sensors[i] = (x1, y1)
+
     def get_state(self):  # Gets the features out of the simulation
         features = [0] * 7
+        self.update_obst_sensors()
         features[6] = self.get_min_person_dist()
         return features
 
