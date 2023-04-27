@@ -23,7 +23,7 @@ class DroneWorld:
         self.person_sensors = [(0, 0)] * self.n_sensors  # Tuple of (x1, y1) as an endpoint of each sensor
         self.person_sensors_readings = [0] * self.n_sensors
         self.obst_sensors = [(0, 0)] * self.n_sensors
-        self.obst_sensors_readings = [0] * self.n_sensors
+        self.obst_sensors_readings = [0.0] * self.n_sensors
 
         # Define actions (forward, left, right)
         self.actions = ((1, 0), (1, -1), (1, 1))
@@ -48,8 +48,10 @@ class DroneWorld:
         self.current_pos = self.starting_pos
         self.current_angle = 0  # 0 = right, 90 = down, 180 = left, 270 = up (no negative angle)
 
-        # Set state (as a list of features)
-        self.state = self.get_state()
+        # IRL state description
+        self.state_features = [0] * ((self.n_sensors * 2) + 2)
+
+        self.update_state()
 
     def get_random_location(self) -> (float, float):
         """
@@ -71,12 +73,14 @@ class DroneWorld:
             self.current_angle += self.angle_step
             if self.current_angle > 359:
                 self.current_angle -= 360
+        else:
+            return
         (x, y) = self.current_pos
         # Apply rotation matrix
         x += (np.cos(self.current_angle * np.pi / 180) * self.forward_step)
         y += (np.sin(self.current_angle * np.pi / 180) * self.forward_step)
         self.current_pos = (x, y)
-        self.state = self.get_state()
+        self.update_state()
         print("Drone Postion: {}, \t Angle: {}".format(self.current_pos, self.current_angle))
 
     def get_min_person_dist(self) -> float:
@@ -105,10 +109,13 @@ class DroneWorld:
             y1 = self.current_pos[1] + (np.sin((self.current_angle + angle_offset) * np.pi / 180) * self.sensor_length)
             self.obst_sensors[i] = (x1, y1)
 
-    def get_state(self):  # Gets the features out of the simulation
-        features = [0] * 7
+    def update_state(self):  # Gets the features out of the simulation
+        # Update people sensors
+
+        # Update obstacle sensors
         self.update_obst_sensors()
-        features[5] = self.get_min_person_dist()
-        features[6] = self.get_min_obst_dist()
-        return features
+        # Update min person proximity
+        self.state_features[14] = self.get_min_person_dist()
+        # Update min obstacle proximity
+        self.state_features[15] = self.get_min_obst_dist()
 

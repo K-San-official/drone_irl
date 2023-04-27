@@ -65,7 +65,7 @@ if __name__ == '__main__':
         sensor_lines.append(new_sensor)
 
     # --- Text Area (for state features) ---
-    text_area = tk.Text(root, bg='white', height=20)
+    text_area = tk.Text(root, bg='white', height=16)
     text_area.pack(side=tk.RIGHT, padx=10, pady=10)
 
     def output_state():
@@ -73,7 +73,7 @@ if __name__ == '__main__':
         # Prints the current simulation state onto the right text field as individual features
         """
         feature_count = 1
-        for state_feature in dw.state:
+        for state_feature in dw.state_features:
             text_area.insert(tk.INSERT, 's_{}: {}\n'.format(feature_count, round(state_feature, 4)))
             feature_count += 1
 
