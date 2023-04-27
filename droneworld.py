@@ -82,7 +82,7 @@ class DroneWorld:
         y += (np.sin(self.current_angle * np.pi / 180) * self.forward_step)
         self.current_pos = (x, y)
         self.update_state()
-        print("Drone Postion: {}, \t Angle: {}".format(self.current_pos, self.current_angle))
+        #print("Drone Postion: {}, \t Angle: {}".format(self.current_pos, self.current_angle))
 
     def get_min_person_dist(self) -> float:
         min_dist = -1
@@ -112,16 +112,26 @@ class DroneWorld:
             angle_offset = (i - (self.n_sensors // 2)) * self.sensor_spread
             x1 = self.current_pos[0] + (np.cos((self.current_angle + angle_offset) * np.pi / 180) * self.sensor_length)
             y1 = self.current_pos[1] + (np.sin((self.current_angle + angle_offset) * np.pi / 180) * self.sensor_length)
+            min_dist = self.sensor_length
+            p0 = self.current_pos
             # Calculate collision with walls using a line segment intersection algorithm
             for o in self.obst:
                 # extract all 4 corner points
-                cp = [(o[0], o[1]), (o[2], o[1]), (o[0], o[3]), (o[2], o[3])]
+                cp = [(o[0], o[1]), (o[2], o[1]), (o[2], o[3]), (o[0], o[3])]
                 for j in range(len(cp)):  # For all 4 line segments of a rectangle
-                    if ut.intersect((self.current_pos, (x1, y1)), (cp[j], cp[(j + 1) % 4])):
-                        x1_t, y1_t = ut.line_intersection_coordinates((self.current_pos, (x1, y1)), (cp[j], cp[(j + 1) % 4]))
-                        if np.sqrt((self.current_pos[0] + x1_t)**2 + (self.current_pos[1] + y1_t)**2) < self.sensor_length:
-                            x1 = x1_t
-                            y1 = y1_t
+                    # Check if line segments intersect
+                    if ut.intersect(p0, (x1, y1), cp[j], cp[(j + 1) % 4]):
+                        x1_t, y1_t = ut.line_intersection_coordinates((p0, (x1, y1)), (cp[j], cp[(j + 1) % 4]))
+                        current_dist = ut.dist(p0, (x1_t, y1_t))
+                        # Check if the distance to the intersection is the closest one
+                        if current_dist < self.sensor_length:
+                            if current_dist < min_dist or min_dist == -1:
+                                min_dist = current_dist
+                                x1 = x1_t
+                                y1 = y1_t
+            print(min_dist)
+            # Map sensor distance to the feature (normalised)
+            self.state_features[self.n_sensors + i] = 1 - (min_dist / self.sensor_length)
             self.obst_sensors[i] = (x1, y1)
 
     def update_state(self):  # Gets the features out of the simulation
@@ -130,7 +140,7 @@ class DroneWorld:
         # Update obstacle sensors
         self.update_obst_sensors()
         # Update min person proximity
-        self.state_features[14] = self.get_min_person_dist()
+        self.state_features[-2] = self.get_min_person_dist()
         # Update min obstacle proximity
-        self.state_features[15] = self.get_min_obst_dist()
+        self.state_features[-1] = self.get_min_obst_dist()
 

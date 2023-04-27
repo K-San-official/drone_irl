@@ -74,7 +74,7 @@ if __name__ == '__main__':
         """
         feature_count = 1
         for state_feature in dw.state_features:
-            text_area.insert(tk.INSERT, 's_{}: {}\n'.format(feature_count, round(state_feature, 4)))
+            text_area.insert(tk.INSERT, 's_{}:\t {}\n'.format(feature_count, round(state_feature, 4)))
             feature_count += 1
 
     output_state()
