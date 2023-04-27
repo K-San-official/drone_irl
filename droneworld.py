@@ -73,6 +73,17 @@ class DroneWorld:
                 min_dist = dist
         return min_dist
 
+    def get_min_obst_dist(self):
+        min_dist = -1
+        for o in self.obst:
+            dx = max(o[0] - self.current_pos[0], self.current_pos[0] - o[2], 0)
+            dy = max(o[1] - self.current_pos[1], self.current_pos[1] - o[3], 0)
+            dist = np.sqrt(dx**2 + dy**2)
+            if dist < min_dist or min_dist == -1:
+                min_dist = dist
+        return min_dist
+
+
     def update_obst_sensors(self):
         for i in range(len(self.obst_sensors)):
             angle_offset = (i - (self.n_sensors // 2)) * self.sensor_spread
@@ -83,7 +94,8 @@ class DroneWorld:
     def get_state(self):  # Gets the features out of the simulation
         features = [0] * 7
         self.update_obst_sensors()
-        features[6] = self.get_min_person_dist()
+        features[5] = self.get_min_person_dist()
+        features[6] = self.get_min_obst_dist()
         return features
 
 
