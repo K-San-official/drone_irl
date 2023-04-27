@@ -1,8 +1,18 @@
 import numpy as np
 
 class DroneWorld:
-    def __init__(self, size, n_people, n_obst, discount):
+    """
+    This class stores all the information of the drone world.
+    A state consists of the features that the drone perceives.
+    """
 
+    def __init__(self, size, n_people, n_obst):
+        """
+        Initialises a new drone world.
+        :param size: square field of size*size
+        :param n_people: number of people
+        :param n_obst: number of obstacles
+        """
         # Simulation configuration
         self.forward_step = 5  # Moves 0.2 steps forward
         self.angle_step = 10  # Moves 20 degrees for every turn
@@ -36,17 +46,21 @@ class DroneWorld:
         # Set random starting position
         self.starting_pos = self.get_random_location()
         self.current_pos = self.starting_pos
-        self.current_angle = 0
+        self.current_angle = 0  # 0 = right, 90 = down, 180 = left, 270 = up (no negative angle)
 
         # Set state (as a list of features)
         self.state = self.get_state()
 
-    def get_random_location(self):
+    def get_random_location(self) -> (float, float):
+        """
+        Generates a new random location in the field (x, y)
+        :return: tuple (x, y)
+        """
         x_r = np.random.rand() * self.size
         y_r = np.random.rand() * self.size
         return x_r, y_r
 
-    def update_drone_location(self, action):  # Updates the drone location for a certain action
+    def update_drone_location(self, action: str):  # Updates the drone location for a certain action
         if action == 'w':
             pass
         elif action == 'a':
@@ -65,7 +79,7 @@ class DroneWorld:
         self.state = self.get_state()
         print("Drone Postion: {}, \t Angle: {}".format(self.current_pos, self.current_angle))
 
-    def get_min_person_dist(self):
+    def get_min_person_dist(self) -> float:
         min_dist = -1
         for p in self.people:
             dist = np.linalg.norm(np.array(p) - np.array(self.current_pos))
@@ -73,7 +87,7 @@ class DroneWorld:
                 min_dist = dist
         return min_dist
 
-    def get_min_obst_dist(self):
+    def get_min_obst_dist(self) -> float:
         min_dist = -1
         for o in self.obst:
             dx = max(o[0] - self.current_pos[0], self.current_pos[0] - o[2], 0)
@@ -98,14 +112,3 @@ class DroneWorld:
         features[6] = self.get_min_obst_dist()
         return features
 
-
-    def __str__(self):
-        pass
-
-
-class FeatureState:
-
-    def __init__(self, sensor_readings, min_dist_person, min_dist_obst):
-        self.sensor_readings = sensor_readings
-        self.min_dist_person = min_dist_person
-        self.min_dist_obst = min_dist_obst

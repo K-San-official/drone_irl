@@ -2,21 +2,18 @@ import tkinter as tk
 import numpy as np
 from droneworld import DroneWorld
 
-
-def get_circle_coordinates(x, y, r):
-    p1 = [x-r, y-r]
-    p2 = [x+r, y+r]
-    return [p1, p2]
-
 if __name__ == '__main__':
+    """
+    This main function needs to be executed to start a new drone world simulation including GUI
+    """
+
     # Edit these variables to change the generation of the world:
     size = 500
-    n_people = 5
-    n_obstacles = 5
-    discount = 0.9
-    drone_angle = 0  # Rotation in the world
+    n_people = 5  # Number of people
+    n_obstacles = 5  # Number of obstacles
 
-    dw = DroneWorld(size, n_people, n_obstacles, discount)
+    # Create new instance of the drone world
+    dw = DroneWorld(size, n_people, n_obstacles)
 
     # Set up GUI
     root = tk.Tk()
@@ -72,11 +69,13 @@ if __name__ == '__main__':
     text_area.pack(side=tk.RIGHT, padx=10, pady=10)
 
     def output_state():
+        """
         # Prints the current simulation state onto the right text field as individual features
-        count = 1
+        """
+        feature_count = 1
         for state_feature in dw.state:
-            text_area.insert(tk.INSERT, 's_{}: {}\n'.format(count, round(state_feature, 4)))
-            count += 1
+            text_area.insert(tk.INSERT, 's_{}: {}\n'.format(feature_count, round(state_feature, 4)))
+            feature_count += 1
 
     output_state()
 
