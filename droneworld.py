@@ -1,4 +1,5 @@
 import numpy as np
+import utils as ut
 
 class DroneWorld:
     """
@@ -102,11 +103,25 @@ class DroneWorld:
         return min_dist
 
 
+    def update_people_sensors(self):
+        pass
+
+
     def update_obst_sensors(self):
         for i in range(len(self.obst_sensors)):
             angle_offset = (i - (self.n_sensors // 2)) * self.sensor_spread
             x1 = self.current_pos[0] + (np.cos((self.current_angle + angle_offset) * np.pi / 180) * self.sensor_length)
             y1 = self.current_pos[1] + (np.sin((self.current_angle + angle_offset) * np.pi / 180) * self.sensor_length)
+            # Calculate collision with walls using a line segment intersection algorithm
+            for o in self.obst:
+                # extract all 4 corner points
+                cp = [(o[0], o[1]), (o[2], o[1]), (o[0], o[3]), (o[2], o[3])]
+                for j in range(len(cp)):  # For all 4 line segments of a rectangle
+                    if ut.intersect((self.current_pos, (x1, y1)), (cp[j], cp[(j + 1) % 4])):
+                        x1_t, y1_t = ut.line_intersection_coordinates((self.current_pos, (x1, y1)), (cp[j], cp[(j + 1) % 4]))
+                        if np.sqrt((self.current_pos[0] + x1_t)**2 + (self.current_pos[1] + y1_t)**2) < self.sensor_length:
+                            x1 = x1_t
+                            y1 = y1_t
             self.obst_sensors[i] = (x1, y1)
 
     def update_state(self):  # Gets the features out of the simulation
