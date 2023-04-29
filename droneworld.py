@@ -111,7 +111,6 @@ class DroneWorld:
             # Check if there is already an obstacle detected by this sensor (and update min_dist accordingly)
             obst_dist = ut.dist(p0, self.obst_sensors[i])
             if obst_dist < min_dist:
-                print("Wall detected", obst_dist)
                 min_dist = obst_dist
             for p in self.people:
                 (hit_dist, sensor_dist) = ut.min_dist_line_seg_point((p0[0], p0[1], x1, y1), p)
@@ -151,9 +150,8 @@ class DroneWorld:
     def update_state(self):  # Gets the features out of the simulation
         # Update obstacle sensors
         self.update_obst_sensors()
-        print(self.state_features)
         # Update people sensors
-        #self.update_people_sensors()
+        self.update_people_sensors()
         # Update min person proximity
         self.state_features[-2] = self.get_min_person_dist()
         # Update min obstacle proximity

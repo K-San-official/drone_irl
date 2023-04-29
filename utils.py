@@ -12,7 +12,7 @@ def ccw(a, b, c):
 
 def intersect(a, b, c, d):
     # https://stackoverflow.com/questions/3838329/how-can-i-check-if-two-segments-intersect
-    return ccw(a, c, c) != ccw(b, c, c) and ccw(a, b, c) != ccw(a, b, d)
+    return ccw(a, c, d) != ccw(b, c, d) and ccw(a, b, c) != ccw(a, b, d)
 
 
 def det(a, b):
