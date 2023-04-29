@@ -108,6 +108,7 @@ class DroneWorld:
             y1 = self.current_pos[1] + (np.sin((self.current_angle + angle_offset) * np.pi / 180) * self.sensor_length)
             min_dist = self.sensor_length
             p0 = self.current_pos
+            person_detected = False
             # Check if there is already an obstacle detected by this sensor (and update min_dist accordingly)
             obst_dist = ut.dist(p0, self.obst_sensors[i])
             if obst_dist < min_dist:
@@ -115,10 +116,19 @@ class DroneWorld:
             for p in self.people:
                 (hit_dist, sensor_dist) = ut.min_dist_line_seg_point((p0[0], p0[1], x1, y1), p)
                 # Check if sensor detects a person
-                if hit_dist < 10:
-                    if sensor_dist < min_dist:
-                        print("Hit", hit_dist, "Length", sensor_dist)
-
+                if hit_dist < 10 and sensor_dist < min_dist:
+                    min_dist = sensor_dist
+                    person_detected = True
+            if person_detected:
+                x1 = self.current_pos[0] + (np.cos((self.current_angle + angle_offset) * np.pi / 180) * min_dist)
+                y1 = self.current_pos[1] + (np.sin((self.current_angle + angle_offset) * np.pi / 180) * min_dist)
+                # Map sensor distance to the feature (normalised)
+                self.state_features[i] = 1 - (min_dist / self.sensor_length)
+            else:
+                # Set sensors to drone location for further display
+                x1, y1 = p0
+                self.state_features[i] = 0.0
+            self.people_sensors[i] = (x1, y1)
 
     def update_obst_sensors(self):
         for i in range(len(self.obst_sensors)):

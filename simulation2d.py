@@ -22,6 +22,7 @@ if __name__ == '__main__':
     canvas.pack(side=tk.LEFT)
 
     # --- Set up elements ---
+    p = dw.starting_pos
 
     # People
     for person in dw.people:
@@ -32,6 +33,7 @@ if __name__ == '__main__':
             person[1] + dw.p_radius,
             fill='purple'
         )
+
     # Obstacles
     for obst in dw.obst:
         canvas.create_rectangle(
@@ -42,8 +44,30 @@ if __name__ == '__main__':
             fill='grey'
         )
 
+    # Sensors
+    sensor_lines_people = []
+    for i in range(dw.n_sensors):
+        new_sensor = canvas.create_line(
+            p[0],
+            p[1],
+            dw.people_sensors[i][0],
+            dw.people_sensors[i][1],
+            fill='purple',
+            width=5
+        )
+        sensor_lines_people.append(new_sensor)
+    sensor_lines_obst = []
+    for i in range(dw.n_sensors):
+        angle_offset = (i - (dw.n_sensors // 2)) * dw.sensor_spread
+        new_sensor = canvas.create_line(
+            p[0],
+            p[1],
+            dw.obst_sensors[i][0],
+            dw.obst_sensors[i][1],
+            fill='blue')
+        sensor_lines_obst.append(new_sensor)
+
     # Drone
-    p = dw.starting_pos
     dr = 10  # Drone radius
     drone_sphere = canvas.create_oval(
         p[0] - dr,
@@ -51,18 +75,6 @@ if __name__ == '__main__':
         p[0] + dr,
         p[1] + dr,
         fill='red')
-
-    # Sensors
-    sensor_lines = []
-    for i in range(dw.n_sensors):
-        angle_offset = (i - (dw.n_sensors // 2)) * dw.sensor_spread
-        new_sensor = canvas.create_line(
-            p[0],
-            p[1],
-            p[0] + (np.cos(angle_offset * np.pi / 180) * dw.sensor_length),
-            p[1] + (np.sin(angle_offset * np.pi / 180) * dw.sensor_length),
-            fill='blue')
-        sensor_lines.append(new_sensor)
 
     # --- Text Area (for state features) ---
     text_area = tk.Text(root, bg='white', height=16)
@@ -93,7 +105,14 @@ if __name__ == '__main__':
             new_pos[1] - dr,)
         for i in range(dw.n_sensors):
             canvas.coords(
-                sensor_lines[i],
+                sensor_lines_people[i],
+                new_pos[0],
+                new_pos[1],
+                dw.people_sensors[i][0],
+                dw.people_sensors[i][1]
+            )
+            canvas.coords(
+                sensor_lines_obst[i],
                 new_pos[0],
                 new_pos[1],
                 dw.obst_sensors[i][0],
