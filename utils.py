@@ -41,12 +41,13 @@ def min_dist_line_seg_point(l, p):
     Calculates the minimum distance between a line segment l and a point in 2D space
     :param l: (x1, y1, x2, y2) endpoint coordinates
     :param p: (xp, yp) coordinates
+    :return (minimum distance from line segment to point, distance from first point in l to the target point)
     """
     dx = p[0] - l[0]
     dy = p[1] - l[1]
     dx_l = l[2] - l[0]
     dy_l = l[3] - l[1]
-    dot_product = np.dot([dx, dx_l], [dy, dy_l])
+    dot_product = np.dot([dx, dy], [dx_l, dy_l])
     line_length_sq = dx_l**2 + dy_l**2
     flag = -1
     if line_length_sq != 0:
@@ -60,5 +61,5 @@ def min_dist_line_seg_point(l, p):
     else:
         xx = l[0] + flag * dx_l
         yy = l[1] + flag * dy_l
-    return dist((p[0] - xx), p[1] - yy)
+    return dist(p, (xx, yy)), dist((l[0], l[1]), (xx, yy))
 

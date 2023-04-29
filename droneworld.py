@@ -21,10 +21,8 @@ class DroneWorld:
         self.n_sensors = 7
         self.sensor_length = 150
         self.sensor_spread = 10  # Angle spread between sensors
-        self.person_sensors = [(0, 0)] * self.n_sensors  # Tuple of (x1, y1) as an endpoint of each sensor
-        self.person_sensors_readings = [0] * self.n_sensors
+        self.people_sensors = [(0, 0)] * self.n_sensors  # Tuple of (x1, y1) as an endpoint of each sensor
         self.obst_sensors = [(0, 0)] * self.n_sensors
-        self.obst_sensors_readings = [0.0] * self.n_sensors
 
         # Define actions (forward, left, right)
         self.actions = ((1, 0), (1, -1), (1, 1))
@@ -104,7 +102,23 @@ class DroneWorld:
 
 
     def update_people_sensors(self):
-        pass
+        for i in range(len(self.people_sensors)):
+            angle_offset = (i - (self.n_sensors // 2)) * self.sensor_spread
+            x1 = self.current_pos[0] + (np.cos((self.current_angle + angle_offset) * np.pi / 180) * self.sensor_length)
+            y1 = self.current_pos[1] + (np.sin((self.current_angle + angle_offset) * np.pi / 180) * self.sensor_length)
+            min_dist = self.sensor_length
+            p0 = self.current_pos
+            # Check if there is already an obstacle detected by this sensor (and update min_dist accordingly)
+            obst_dist = ut.dist(p0, self.obst_sensors[i])
+            if obst_dist < min_dist:
+                print("Wall detected", obst_dist)
+                min_dist = obst_dist
+            for p in self.people:
+                (hit_dist, sensor_dist) = ut.min_dist_line_seg_point((p0[0], p0[1], x1, y1), p)
+                # Check if sensor detects a person
+                if hit_dist < 10:
+                    if sensor_dist < min_dist:
+                        print("Hit", hit_dist, "Length", sensor_dist)
 
 
     def update_obst_sensors(self):
@@ -129,16 +143,17 @@ class DroneWorld:
                                 min_dist = current_dist
                                 x1 = x1_t
                                 y1 = y1_t
-            print(min_dist)
             # Map sensor distance to the feature (normalised)
             self.state_features[self.n_sensors + i] = 1 - (min_dist / self.sensor_length)
             self.obst_sensors[i] = (x1, y1)
 
-    def update_state(self):  # Gets the features out of the simulation
-        # Update people sensors
 
+    def update_state(self):  # Gets the features out of the simulation
         # Update obstacle sensors
         self.update_obst_sensors()
+        print(self.state_features)
+        # Update people sensors
+        #self.update_people_sensors()
         # Update min person proximity
         self.state_features[-2] = self.get_min_person_dist()
         # Update min obstacle proximity
