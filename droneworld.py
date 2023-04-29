@@ -62,8 +62,9 @@ class DroneWorld:
         return x_r, y_r
 
     def update_drone_location(self, action: str):  # Updates the drone location for a certain action
+        step = 0
         if action == 'w':
-            pass
+            step = self.forward_step
         elif action == 'a':
             self.current_angle -= self.angle_step
             if self.current_angle < 0:
@@ -76,8 +77,8 @@ class DroneWorld:
             return
         (x, y) = self.current_pos
         # Apply rotation matrix
-        x += (np.cos(self.current_angle * np.pi / 180) * self.forward_step)
-        y += (np.sin(self.current_angle * np.pi / 180) * self.forward_step)
+        x += (np.cos(self.current_angle * np.pi / 180) * step)
+        y += (np.sin(self.current_angle * np.pi / 180) * step)
         self.current_pos = (x, y)
         self.update_state()
         #print("Drone Postion: {}, \t Angle: {}".format(self.current_pos, self.current_angle))
