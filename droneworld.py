@@ -65,6 +65,8 @@ class DroneWorld:
         step = 0
         if action == 'w':
             step = self.forward_step
+        elif action == 's':
+            step = -self.forward_step
         elif action == 'a':
             self.current_angle -= self.angle_step
             if self.current_angle < 0:
