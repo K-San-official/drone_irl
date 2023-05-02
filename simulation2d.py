@@ -68,12 +68,11 @@ if __name__ == '__main__':
         sensor_lines_obst.append(new_sensor)
 
     # Drone
-    dr = 10  # Drone radius
     drone_sphere = canvas.create_oval(
-        p[0] - dr,
-        p[1] - dr,
-        p[0] + dr,
-        p[1] + dr,
+        p[0] - dw.dr_rad,
+        p[1] - dw.dr_rad,
+        p[0] + dw.dr_rad,
+        p[1] + dw.dr_rad,
         fill='red')
 
     # --- Text Area (for state features) ---
@@ -101,8 +100,8 @@ if __name__ == '__main__':
         new_pos = dw.current_pos
         canvas.moveto(
             drone_sphere,
-            new_pos[0] - dr,
-            new_pos[1] - dr,)
+            new_pos[0] - dw.dr_rad,
+            new_pos[1] - dw.dr_rad,)
         for i in range(dw.n_sensors):
             canvas.coords(
                 sensor_lines_people[i],

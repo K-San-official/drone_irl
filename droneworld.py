@@ -1,6 +1,7 @@
 import numpy as np
 import utils as ut
 
+
 class DroneWorld:
     """
     This class stores all the information of the drone world.
@@ -15,6 +16,7 @@ class DroneWorld:
         :param n_obst: number of obstacles
         """
         # Simulation configuration
+        self.dr_rad = 10  # Drone radius
         self.forward_step = 5  # Moves 0.2 steps forward
         self.angle_step = 10  # Moves 20 degrees for every turn
 
@@ -81,9 +83,17 @@ class DroneWorld:
         # Apply rotation matrix
         x += (np.cos(self.current_angle * np.pi / 180) * step)
         y += (np.sin(self.current_angle * np.pi / 180) * step)
-        self.current_pos = (x, y)
+        # Check if drone is still in the bounds of the field
+        if self.dr_rad <= x <= self.size - self.dr_rad and self.dr_rad <= y <= self.size - self.dr_rad:
+            # Check if new position is not inside obstacles
+            in_obst = False
+            for o in self.obst:
+                if o[0] - self.dr_rad < x < o[2] + self.dr_rad and o[1] - self.dr_rad < y < o[3] + self.dr_rad:
+                    in_obst = True
+            if not in_obst:
+                self.current_pos = (x, y)
         self.update_state()
-        #print("Drone Postion: {}, \t Angle: {}".format(self.current_pos, self.current_angle))
+        # print("Drone Postion: {}, \t Angle: {}".format(self.current_pos, self.current_angle))
 
     def get_min_person_dist(self) -> float:
         min_dist = -1
@@ -98,11 +108,10 @@ class DroneWorld:
         for o in self.obst:
             dx = max(o[0] - self.current_pos[0], self.current_pos[0] - o[2], 0)
             dy = max(o[1] - self.current_pos[1], self.current_pos[1] - o[3], 0)
-            dist = np.sqrt(dx**2 + dy**2)
+            dist = np.sqrt(dx ** 2 + dy ** 2)
             if dist < min_dist or min_dist == -1:
                 min_dist = dist
         return min_dist
-
 
     def update_people_sensors(self):
         for i in range(len(self.people_sensors)):
@@ -159,7 +168,6 @@ class DroneWorld:
             self.state_features[self.n_sensors + i] = 1 - (min_dist / self.sensor_length)
             self.obst_sensors[i] = (x1, y1)
 
-
     def update_state(self):  # Gets the features out of the simulation
         # Update obstacle sensors
         self.update_obst_sensors()
@@ -169,4 +177,3 @@ class DroneWorld:
         self.state_features[-2] = self.get_min_person_dist()
         # Update min obstacle proximity
         self.state_features[-1] = self.get_min_obst_dist()
-
