@@ -46,6 +46,9 @@ class DroneWorld:
 
         # Set random starting position
         self.starting_pos = self.get_random_location()
+        # Repeat if starting location is inside an obstacle
+        while self.is_in_obstacle(self.starting_pos):
+            self.starting_pos = self.get_random_location()
         self.current_pos = self.starting_pos
         self.current_angle = 0  # 0 = right, 90 = down, 180 = left, 270 = up (no negative angle)
 
@@ -59,8 +62,8 @@ class DroneWorld:
         Generates a new random location in the field (x, y)
         :return: tuple (x, y)
         """
-        x_r = np.random.rand() * self.size
-        y_r = np.random.rand() * self.size
+        x_r = np.random.rand() * (self.size - (self.dr_rad * 2)) + self.dr_rad
+        y_r = np.random.rand() * (self.size - (self.dr_rad * 2)) + self.dr_rad
         return x_r, y_r
 
     def update_drone_location(self, action: str):  # Updates the drone location for a certain action
@@ -86,11 +89,7 @@ class DroneWorld:
         # Check if drone is still in the bounds of the field
         if self.dr_rad <= x <= self.size - self.dr_rad and self.dr_rad <= y <= self.size - self.dr_rad:
             # Check if new position is not inside obstacles
-            in_obst = False
-            for o in self.obst:
-                if o[0] - self.dr_rad < x < o[2] + self.dr_rad and o[1] - self.dr_rad < y < o[3] + self.dr_rad:
-                    in_obst = True
-            if not in_obst:
+            if not self.is_in_obstacle((x, y)):
                 self.current_pos = (x, y)
         self.update_state()
         # print("Drone Postion: {}, \t Angle: {}".format(self.current_pos, self.current_angle))
@@ -177,3 +176,16 @@ class DroneWorld:
         self.state_features[-2] = self.get_min_person_dist()
         # Update min obstacle proximity
         self.state_features[-1] = self.get_min_obst_dist()
+
+    def is_in_obstacle(self, pos):
+        """
+        Checks if a position is inside an obstacle.
+        The drone radius is added as a margin.
+        """
+        in_obst = False
+        for o in self.obst:
+            if o[0] - self.dr_rad < pos[0] < o[2] + self.dr_rad and o[1] - self.dr_rad < pos[1] < o[3] + self.dr_rad:
+                in_obst = True
+                break
+        return in_obst
+
