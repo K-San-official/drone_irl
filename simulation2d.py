@@ -76,7 +76,7 @@ if __name__ == '__main__':
         fill='red')
 
     # --- Text Area (for state features) ---
-    text_area = tk.Text(root, bg='white', height=16)
+    text_area = tk.Text(root, bg='white', height=20)
     text_area.pack(side=tk.RIGHT, padx=10, pady=10)
 
     def output_state():
@@ -85,8 +85,15 @@ if __name__ == '__main__':
         """
         feature_count = 1
         for state_feature in dw.state_features:
-            text_area.insert(tk.INSERT, 's_{}:\t {}\n'.format(feature_count, round(state_feature, 4)))
+            text_area.insert(
+                tk.INSERT,
+                's_{}:\t {}\n'.format(feature_count, round(state_feature, 4))
+            )
             feature_count += 1
+        text_area.insert("1.0", "Person Sensors\n")
+        text_area.insert("9.0", "Obstacle Sensors\n")
+        text_area.insert("17.0", "Person Proximity\n")
+        text_area.insert("19.0", "Obstacle Proximity\n")
 
     output_state()
 
