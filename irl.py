@@ -1,7 +1,7 @@
 import random
 
 
-class policy:
+class Policy:
 
     def __init__(self, type):
         self.type = "random"

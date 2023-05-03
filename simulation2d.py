@@ -1,6 +1,7 @@
+import time
 import tkinter as tk
-import numpy as np
 from droneworld import DroneWorld
+from irl import Policy
 
 if __name__ == '__main__':
     """
@@ -15,11 +16,27 @@ if __name__ == '__main__':
     # Create new instance of the drone world
     dw = DroneWorld(size, n_people, n_obstacles)
 
+    def execute_random_policy():
+        pol = Policy('random')
+        for i in range(200):
+            a = pol.get_action(dw.state_features)
+            time.sleep(0.05)
+            perform_action(a)
+            canvas.update_idletasks()
+            text_area.update_idletasks()
+
+    def execute_avoid_p_policy():
+        print("To be done!")
+
     # Set up GUI
     root = tk.Tk()
     root.geometry('{}x{}'.format(size + 200, size + 200))
     canvas = tk.Canvas(root, bg='green', height=size, width=size)
     canvas.pack(side=tk.LEFT)
+    button_rand_policy = tk.Button(root, text='Random Policy', command=execute_random_policy)
+    button_rand_policy.pack(side=tk.BOTTOM)
+    button_avoid_obst_policy = tk.Button(root, text='Avoid People Policy', command=execute_avoid_p_policy)
+    button_avoid_obst_policy.pack(side=tk.BOTTOM)
 
     # --- Set up elements ---
     p = dw.starting_pos
@@ -97,18 +114,16 @@ if __name__ == '__main__':
 
     output_state()
 
-    def keypress(event):
+    def perform_action(a):
         """
-        Moves the drone (red circle) on the field when a button is pressed.
-        :param event:
-        :return:
+        Performs an action either by key input or by following a policy input
         """
-        dw.update_drone_location(event.char)
+        dw.update_drone_location(a)
         new_pos = dw.current_pos
         canvas.moveto(
             drone_sphere,
             new_pos[0] - dw.dr_rad,
-            new_pos[1] - dw.dr_rad,)
+            new_pos[1] - dw.dr_rad, )
         for i in range(dw.n_sensors):
             canvas.coords(
                 sensor_lines_people[i],
@@ -126,6 +141,15 @@ if __name__ == '__main__':
             )
         text_area.delete('1.0', tk.END)
         output_state()
+
+    def keypress(event):
+        """
+        Moves the drone (red circle) on the field when a button is pressed.
+        :param event:
+        :return:
+        """
+        perform_action(event.char)
+
 
     root.bind("<Key>", keypress)
 
