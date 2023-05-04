@@ -172,10 +172,10 @@ class DroneWorld:
         self.update_obst_sensors()
         # Update people sensors
         self.update_people_sensors()
-        # Update min person proximity
-        self.state_features[-2] = self.get_min_person_dist()
-        # Update min obstacle proximity
-        self.state_features[-1] = self.get_min_obst_dist()
+        # Update min person proximity (normalised)
+        self.state_features[-2] = 1 - (self.get_min_person_dist() / self.size)
+        # Update min obstacle (normalised)
+        self.state_features[-1] = 1 - (self.get_min_obst_dist() / self.size)
 
     def is_in_obstacle(self, pos):
         """
