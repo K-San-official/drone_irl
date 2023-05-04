@@ -72,3 +72,11 @@ The normalised values are high for close distances and low for distances far awa
 It is important to mention that people in this simulation are "see-through", so the drone is able to detect
 obstacles behind people in a straight line of sight, but it is not able to detect people behind obstacles.
 The last two entries disregard anything in-between and just indicate proximity. 
+
+### Actions ###
+
+There are 4 possible actions denoted by the characters `w`, `a`, `s`, `d`, corresponding to normal
+keyboard controls (up, left, down, right)
+
+For forward and backward movement, the drone moves by a fixed step.
+Turning left and right happens on the spot without any change of coordinates.
