@@ -44,6 +44,13 @@ class DroneWorld:
             y1 = y0 + (np.random.rand() * 90) + 10
             self.obst.append((x0, y0, x1, y1))
 
+        # Place obstacles at the borders of the environment
+        bt = 5  # Border thickness
+        self.obst.append((0, 0, self.size, bt))  # Top wall
+        self.obst.append((0, self.size - bt, self.size, self.size))  # Bottom wall
+        self.obst.append((0, bt, bt, self.size - bt))  # Left wall
+        self.obst.append((self.size - bt, bt, self.size, self.size - bt))
+
         # Set random starting position
         self.starting_pos = self.get_random_location()
         # Repeat if starting location is inside an obstacle
