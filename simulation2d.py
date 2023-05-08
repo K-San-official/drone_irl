@@ -2,6 +2,7 @@ import time
 import tkinter as tk
 from droneworld import DroneWorld
 from irl import Policy
+from trajectory_logger import TrajectoryLogger
 
 if __name__ == '__main__':
     """
@@ -16,37 +17,20 @@ if __name__ == '__main__':
     # Create new instance of the drone world
     dw = DroneWorld(size, n_people, n_obstacles)
 
-    def execute_random_policy():
-        pol = Policy('random')
-        for i in range(200):
-            a = pol.get_action(dw.state_features)
-            time.sleep(0.05)
-            perform_action(a)
-            canvas.update_idletasks()
-            text_area.update_idletasks()
+    # Trajectory logger instance
+    tj = TrajectoryLogger()
 
-    def execute_avoid_p_policy():
-        pol = Policy('avoid_people')
+    def execute_policy(pol_type):
+        """
+        Executes a demonstration following the specified policy
+        :param pol_type:
+        :return:
+        """
+        pol = Policy(pol_type)
+        tj.setup(pol_type)
         for i in range(200):
             a = pol.get_action(dw.state_features)
-            time.sleep(0.05)
-            perform_action(a)
-            canvas.update_idletasks()
-            text_area.update_idletasks()
-
-    def execute_avoid_o_policy():
-        pol = Policy('avoid_obstacles')
-        for i in range(200):
-            a = pol.get_action(dw.state_features)
-            time.sleep(0.05)
-            perform_action(a)
-            canvas.update_idletasks()
-            text_area.update_idletasks()
-
-    def execute_avoid_a_policy():
-        pol = Policy('avoid_all')
-        for i in range(200):
-            a = pol.get_action(dw.state_features)
+            tj.add_line(dw.state_features, a)
             time.sleep(0.05)
             perform_action(a)
             canvas.update_idletasks()
@@ -59,16 +43,17 @@ if __name__ == '__main__':
     canvas.pack(side=tk.LEFT)
 
     # Policy Execution Buttons
-    button_rand_policy = tk.Button(root, text='Random Policy', command=execute_random_policy)
+    button_rand_policy = tk.Button(root, text='Random Policy', command=lambda: execute_policy('random'))
     button_rand_policy.pack(side=tk.BOTTOM)
 
-    button_avoid_people_policy = tk.Button(root, text='Avoid People Policy', command=execute_avoid_p_policy)
+    button_avoid_people_policy = tk.Button(root, text='Avoid People Policy', command=lambda: execute_policy('avoid_p'))
     button_avoid_people_policy.pack(side=tk.BOTTOM)
 
-    button_avoid_obst_policy = tk.Button(root, text='Avoid Obstacle Policy', command=execute_avoid_o_policy)
+    button_avoid_obst_policy = tk.Button(root, text='Avoid Obstacle Policy', command=lambda: execute_policy('avoid_o'))
     button_avoid_obst_policy.pack(side=tk.BOTTOM)
 
-    button_avoid_all_policy = tk.Button(root, text='Avoid All Policy', command=execute_avoid_a_policy)
+    button_avoid_all_policy = tk.Button(root, text='Avoid All Policy',command=lambda: execute_policy('avoid_a'))
+    button_avoid_all_policy.pack(side=tk.BOTTOM)
 
     # --- Set up elements ---
     p = dw.starting_pos
