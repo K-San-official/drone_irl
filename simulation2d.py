@@ -10,7 +10,7 @@ if __name__ == '__main__':
 
     # Edit these variables to change the generation of the world:
     size = 500
-    n_people = 5  # Number of people
+    n_people = 25  # Number of people
     n_obstacles = 5  # Number of obstacles
 
     # Create new instance of the drone world
@@ -26,17 +26,49 @@ if __name__ == '__main__':
             text_area.update_idletasks()
 
     def execute_avoid_p_policy():
-        print("To be done!")
+        pol = Policy('avoid_people')
+        for i in range(200):
+            a = pol.get_action(dw.state_features)
+            time.sleep(0.05)
+            perform_action(a)
+            canvas.update_idletasks()
+            text_area.update_idletasks()
+
+    def execute_avoid_o_policy():
+        pol = Policy('avoid_obstacles')
+        for i in range(200):
+            a = pol.get_action(dw.state_features)
+            time.sleep(0.05)
+            perform_action(a)
+            canvas.update_idletasks()
+            text_area.update_idletasks()
+
+    def execute_avoid_a_policy():
+        pol = Policy('avoid_all')
+        for i in range(200):
+            a = pol.get_action(dw.state_features)
+            time.sleep(0.05)
+            perform_action(a)
+            canvas.update_idletasks()
+            text_area.update_idletasks()
 
     # Set up GUI
     root = tk.Tk()
     root.geometry('{}x{}'.format(size + 200, size + 200))
     canvas = tk.Canvas(root, bg='green', height=size, width=size)
     canvas.pack(side=tk.LEFT)
+
+    # Policy Execution Buttons
     button_rand_policy = tk.Button(root, text='Random Policy', command=execute_random_policy)
     button_rand_policy.pack(side=tk.BOTTOM)
-    button_avoid_obst_policy = tk.Button(root, text='Avoid People Policy', command=execute_avoid_p_policy)
+
+    button_avoid_people_policy = tk.Button(root, text='Avoid People Policy', command=execute_avoid_p_policy)
+    button_avoid_people_policy.pack(side=tk.BOTTOM)
+
+    button_avoid_obst_policy = tk.Button(root, text='Avoid Obstacle Policy', command=execute_avoid_o_policy)
     button_avoid_obst_policy.pack(side=tk.BOTTOM)
+
+    button_avoid_all_policy = tk.Button(root, text='Avoid All Policy', command=execute_avoid_a_policy)
 
     # --- Set up elements ---
     p = dw.starting_pos
