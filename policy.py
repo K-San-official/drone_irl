@@ -3,15 +3,9 @@ import random
 
 class Policy:
 
-    def __init__(self, type):
-        self.type = "random"
+    def __init__(self, pol_type):
+        self.pol_type = pol_type
         self.wind = 0.2
-        if type == "avoid_people":
-            self.type = "avoid_people"
-        elif type == "avoid_obstacles":
-            self.type = "avoid_obstacles"
-        elif type == "avoid_all":
-            self.type = "avoid_all"
 
     def get_action(self, sf):
         """
@@ -19,13 +13,13 @@ class Policy:
         :param sf:
         :return:
         """
-        if self.type == "random":
+        if self.pol_type == "random":
             action = self.get_action_random()
-        elif self.type == "avoid_people":
+        elif self.pol_type == "avoid_p":
             action = self.get_action_avoid_people(sf)
-        elif self.type == "avoid_obstacles":
+        elif self.pol_type == "avoid_o":
             action = self.get_action_avoid_obstacles(sf)
-        elif self.type == "avoid_all":
+        elif self.pol_type == "avoid_a":
             action = self.get_action_avoid_all(sf)
         return action
 
@@ -120,3 +114,4 @@ class Policy:
         :param sf:
         :return:
         """
+        pass

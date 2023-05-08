@@ -1,7 +1,7 @@
 import time
 import tkinter as tk
 from droneworld import DroneWorld
-from irl import Policy
+from policy import Policy
 from trajectory_logger import TrajectoryLogger
 
 if __name__ == '__main__':

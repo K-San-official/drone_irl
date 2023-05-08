@@ -1,7 +1,9 @@
 import os
 
+
 class TrajectoryLogger:
 
+    # Instance variables
     policy_type = 'not_defined'  # This value should be overridden once policy is set
     directory = ''
     filepath = ''
