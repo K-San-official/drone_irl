@@ -83,10 +83,12 @@ class DroneWorld:
             self.current_angle -= self.angle_step
             if self.current_angle < 0:
                 self.current_angle += 360
+            step = self.forward_step
         elif action == 'd':
             self.current_angle += self.angle_step
             if self.current_angle > 359:
                 self.current_angle -= 360
+            step = self.forward_step
         else:
             return
         (x, y) = self.current_pos
