@@ -90,10 +90,16 @@ class Policy:
         left_sum = 0
         right_sum = 0
         total_sum = sum(sf[int(len(sf) / 2) - 2:-2])
+        if total_sum > 5 or sf[15] > 0.97:
+            return 's'
+        if total_sum < 2 and sf[15] > 0.95:
+            rand_turn = random.random()
+            if rand_turn < 0.5:
+                return 'd'
+            else:
+                return 'a'
         if total_sum < 1:
             return 'w'
-        if total_sum > 6:
-            return 's'
         # Iterate over all obstacles detecting sensors
         for i in range(int(len(sf) / 2) - 2):
             if i <= 2:

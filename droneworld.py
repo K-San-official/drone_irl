@@ -61,7 +61,9 @@ class DroneWorld:
         # Place obstacles into the world
         self.obst.append((100, 0, 150, 200))
         self.obst.append((0, 350, 100, 400))
-        self.obst.append((320, 300, 340, 500))
+        self.obst.append((320, 300, 380, 350))
+        self.obst.append((290, 180, 390, 200))
+        self.obst.append((400, 0, 500, 50))
 
     def create_rand_env(self):
         """
