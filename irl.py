@@ -3,6 +3,10 @@ import random
 import os
 import numpy as np
 
+from keras.models import Sequential
+from keras.layers import InputLayer
+from keras.layers import Dense
+
 from droneworld import DroneWorld
 
 def margin_opt(traj_list):
@@ -34,17 +38,69 @@ def feature_expectation(traj_list, discount):
     return mu
 
 
-def execute_irl(epochs: int, gamma: float, dw: DroneWorld, traj_path: str):
+def q_learning(episodes: int, env: DroneWorld, w):
+    """
+    Reference: https://www.baeldung.com/cs/reinforcement-learning-neural-network
+    Executes the famous Q-Learning algorithm to find a policy that matches the reward-function best
+    :param episodes:
+    :param env:
+    :param w:
+    :return:
     """
 
-    :param epochs:
+    # Define variables
+    gamma = 0.9
+    eps = 0.5
+    eps_decay_factor = 0.99
+    alpha = 0.8
+
+    # Create Neural network
+    nn = Sequential()
+    nn.add(Dense(16, activation='relu'))
+    nn.add(Dense(16, activation='relu'))
+    nn.add(Dense(4, activation='linear'))
+    nn.compile(loss='mse', optimizer='adam', metrics=['mae'])
+
+    # Reset starting position
+    dw.current_pos = dw.starting_pos
+
+    for i in range(episodes):
+        if random.random() < eps:
+            action = random.randint(0, 3)
+        else:
+            action = np.argmax(
+                nn.predict(np.expand_dims(dw.state_features, axis=0))  # Need to add empty dimension at the front
+            )
+            print(nn.predict(np.expand_dims(dw.state_features, axis=0)))
+        a = 'w'
+        if action == 0:
+            a = 'w'
+        elif action == 1:
+            a = 'a'
+        elif action == 2:
+            a = 's'
+        elif action == 3:
+            a = 'd'
+        sf_old = dw.state_features
+        dw.update_drone_location(a)
+        reward = sum(np.multiply(dw.state_features, w))
+        target = reward + gamma + np.max(np.expand_dims(dw.state_features, axis=0))
+        # Backpropagation of weights inside the nn
+        nn.fit(np.expand_dims(sf_old, axis=0), target, epochs=1)  # TODO: Find correct shapes to fit nn
+
+
+
+def execute_irl(iterations: int, gamma: float, dw: DroneWorld, traj_path: str):
+    """
+
+    :param iterations:
     :param gamma:
     :param dw:
     :param traj_path:
     :return:
     """
     w = [0] * 16  # Reward weights
-    traj_list = []  # axis 0 = trajectory | axis 1 = step | axis 2 = [state feature, action]
+    traj_list = []  # axis 0 = trajectory | axis 1 = step | axis 2 = state feature (0-15), action (16)
 
     # Import trajectories from csv files
     for filename in os.listdir(traj_path):
@@ -60,7 +116,7 @@ def execute_irl(epochs: int, gamma: float, dw: DroneWorld, traj_path: str):
     mu_e = feature_expectation(traj_list, gamma)
     print(mu_e)
 
-    for i in range(epochs):
+    for i in range(iterations):
         # --- Step 1: Update reward weights ---
         if i == 0:
             # Initialise random weights for the first iteration
@@ -68,10 +124,11 @@ def execute_irl(epochs: int, gamma: float, dw: DroneWorld, traj_path: str):
                 w[j] = random.random() * 2 - 1  # Interval [-1, 1]
 
         # --- Step 2: Generate new policy wrt. new reward weights ---
+        q_learning(10, dw, w)
 
         # --- Step 3: Compute new feature expectations from policy ---
 
-        pass
+
 
 
 if __name__ == '__main__':
@@ -79,7 +136,7 @@ if __name__ == '__main__':
 
     dw = DroneWorld(500, 0, 0, 1)
     n_traj = 10  # Number of trajectories that are created by the expert policies
-    n_steps = 500  # Number of steps performed for each trajectory
+    n_steps = 10  # Number of steps performed for each trajectory
     pol_type = 'avoid_o'
     directory = f'traj/{pol_type}'
     generate_new_traj = False
@@ -98,7 +155,6 @@ if __name__ == '__main__':
         for i in range(n_traj):
             print(f'Creating Trajectory {i}')
             dw.execute_policy(pol_type, n_steps)
-
 
     # --- Step 3: Execute IRL ---
     execute_irl(1, 0.9, dw, directory)
