@@ -43,10 +43,11 @@ if __name__ == '__main__':
     # --- Step 2: Create expert trajectories ---
 
     # Clear old files in folder
-    directory = f'traj/{pol_type}'
-    filelist = [f for f in os.listdir(directory) if f.endswith(".csv")]
-    for f in filelist:
-        os.remove(os.path.join(directory, f))
+    if os.path.exists(f'traj/{pol_type}'):
+        directory = f'traj/{pol_type}'
+        filelist = [f for f in os.listdir(directory) if f.endswith(".csv")]
+        for f in filelist:
+            os.remove(os.path.join(directory, f))
 
     # Record new trajectories from demonstration runs
     for i in range(n_traj):

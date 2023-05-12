@@ -17,6 +17,13 @@ class TrajectoryLogger:
         self.policy_type = pol
         self.directory = 'traj/{}'.format(pol)
 
+        # Create directories if they were not created before
+        # Check whether the specified path exists or not
+        if not os.path.exists(f'traj/{self.policy_type}'):
+            # Create a new directory because it does not exist
+            os.makedirs(f'traj/{self.policy_type}')
+            print("The new directory is created!")
+
         count = 0
         for element in os.listdir(self.directory):
             element_path = os.path.join(self.directory, element)
