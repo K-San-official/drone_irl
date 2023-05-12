@@ -1,6 +1,8 @@
 import numpy as np
 import utils as ut
 
+from policy import Policy
+from trajectory_logger import TrajectoryLogger
 
 class DroneWorld:
     """
@@ -8,7 +10,7 @@ class DroneWorld:
     A state consists of the features that the drone perceives.
     """
 
-    def __init__(self, size, n_people, n_obst, env=1):
+    def __init__(self, size, n_people, n_obst, env=0):
         """
         Initialises a new drone world.
         :param size: square field of size*size
@@ -241,3 +243,21 @@ class DroneWorld:
                 break
         return in_obst
 
+    def execute_policy(self, pol_type, steps):
+        """
+        Executes a policy in the drone world for a number of steps without a GUI
+        :param pol_type:
+        :param steps:
+        :return:
+        """
+        tj = TrajectoryLogger()
+        pol = Policy(pol_type)
+        tj.setup(pol_type)
+        # Reset drone position and orientation
+        self.current_pos = self.starting_pos
+        self.current_angle = 90
+        # Run n steps in the simulation and log data
+        for i in range(steps):
+            a = pol.get_action(self.state_features)
+            tj.add_line(self.state_features, a)
+            self.update_drone_location(a)
