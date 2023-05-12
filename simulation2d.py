@@ -15,7 +15,7 @@ if __name__ == '__main__':
     n_obstacles = 5  # Number of obstacles
 
     # Create new instance of the drone world
-    dw = DroneWorld(size, n_people, n_obstacles)
+    dw = DroneWorld(size, n_people, n_obstacles, 1)
 
     # Trajectory logger instance
     tj = TrajectoryLogger()

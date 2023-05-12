@@ -8,7 +8,7 @@ class DroneWorld:
     A state consists of the features that the drone perceives.
     """
 
-    def __init__(self, size, n_people, n_obst):
+    def __init__(self, size, n_people, n_obst, env=1):
         """
         Initialises a new drone world.
         :param size: square field of size*size
@@ -19,6 +19,12 @@ class DroneWorld:
         self.dr_rad = 10  # Drone radius
         self.forward_step = 5  # Moves 0.2 steps forward
         self.angle_step = 10  # Moves 20 degrees for every turn
+        self.n_people = n_people
+        self.n_obst = n_obst
+
+        self.people = []  # List with positions of all people
+        self.obst = []  # List with coordinate bounds of all obstacles
+        self.p_radius = 10  # Radius of circles representing people
 
         self.n_sensors = 7
         self.sensor_length = 150
@@ -26,30 +32,55 @@ class DroneWorld:
         self.people_sensors = [(0, 0)] * self.n_sensors  # Tuple of (x1, y1) as an endpoint of each sensor
         self.obst_sensors = [(0, 0)] * self.n_sensors
 
+        self.current_pos = (0, 0)
+        self.starting_pos = (0, 0)
+        self.current_angle = 0
+
         # Define actions (forward, left, right)
         self.actions = ((1, 0), (1, -1), (1, 1))
         self.size = size
 
+        # Create environment
+        if env == 0:
+            self.create_rand_env()
+        elif env == 1:
+            self.create_env_1()
+
+        # IRL state description
+        self.state_features = [0] * ((self.n_sensors * 2) + 2)
+
+        self.update_state()
+
+    def create_env_1(self):
+        self.place_borders()
+
+        self.starting_pos = (50, 50)
+        self.current_pos = self.starting_pos
+        self.current_angle = 90
+
+        # Place obstacles into the world
+        self.obst.append((100, 0, 150, 200))
+        self.obst.append((0, 350, 100, 400))
+        self.obst.append((320, 300, 340, 500))
+
+    def create_rand_env(self):
+        """
+        Creates a random environment with a certain number of obstacles and people.
+        The size of the obstacles varies.
+        :return:
+        """
         # Place people into the world (randomly)
-        self.people = []
-        self.p_radius = 10  # Radius of circles representing people
-        for i in range(n_people):
+        for i in range(self.n_people):
             self.people.append(self.get_random_location())
 
         # Place obstacles into the world (randomly)
-        self.obst = []
-        for i in range(n_obst):
+        for i in range(self.n_obst):
             (x0, y0) = self.get_random_location()
             x1 = x0 + (np.random.rand() * 90) + 10
             y1 = y0 + (np.random.rand() * 90) + 10
             self.obst.append((x0, y0, x1, y1))
 
-        # Place obstacles at the borders of the environment
-        bt = 5  # Border thickness
-        self.obst.append((0, 0, self.size, bt))  # Top wall
-        self.obst.append((0, self.size - bt, self.size, self.size))  # Bottom wall
-        self.obst.append((0, bt, bt, self.size - bt))  # Left wall
-        self.obst.append((self.size - bt, bt, self.size, self.size - bt))
+        self.place_borders()
 
         # Set random starting position
         self.starting_pos = self.get_random_location()
@@ -57,12 +88,17 @@ class DroneWorld:
         while self.is_in_obstacle(self.starting_pos):
             self.starting_pos = self.get_random_location()
         self.current_pos = self.starting_pos
-        self.current_angle = 0  # 0 = right, 90 = down, 180 = left, 270 = up (no negative angle)
 
-        # IRL state description
-        self.state_features = [0] * ((self.n_sensors * 2) + 2)
-
-        self.update_state()
+    def place_borders(self):
+        """
+        Places borders at the edges of the environment so that the drone cannot leave the field.
+        :return:
+        """
+        bt = 5  # Border thickness
+        self.obst.append((0, 0, self.size, bt))  # Top wall
+        self.obst.append((0, self.size - bt, self.size, self.size))  # Bottom wall
+        self.obst.append((0, bt, bt, self.size - bt))  # Left wall
+        self.obst.append((self.size - bt, bt, self.size, self.size - bt))
 
     def get_random_location(self) -> (float, float):
         """
@@ -73,7 +109,12 @@ class DroneWorld:
         y_r = np.random.rand() * (self.size - (self.dr_rad * 2)) + self.dr_rad
         return x_r, y_r
 
-    def update_drone_location(self, action: str):  # Updates the drone location for a certain action
+    def update_drone_location(self, action: str):
+        """
+        Performs one action in the drone world and moves the drone according to the action
+        :param action:
+        :return:
+        """
         step = 0
         if action == 'w':
             step = self.forward_step

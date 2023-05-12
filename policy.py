@@ -5,7 +5,7 @@ class Policy:
 
     def __init__(self, pol_type):
         self.pol_type = pol_type
-        self.wind = 0.2
+        self.wind = 0.1
 
     def get_action(self, sf):
         """
@@ -92,7 +92,7 @@ class Policy:
         total_sum = sum(sf[int(len(sf) / 2) - 2:-2])
         if total_sum < 1:
             return 'w'
-        if total_sum > 3.5:
+        if total_sum > 6:
             return 's'
         # Iterate over all obstacles detecting sensors
         for i in range(int(len(sf) / 2) - 2):
