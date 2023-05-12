@@ -86,7 +86,7 @@ def q_learning(episodes: int, env: DroneWorld, w):
         reward = sum(np.multiply(dw.state_features, w))
         target = reward + gamma + np.max(np.expand_dims(dw.state_features, axis=0))
         # Backpropagation of weights inside the nn
-        nn.fit(np.expand_dims(sf_old, axis=0), target, epochs=1)  # TODO: Find correct shapes to fit nn
+        nn.fit(np.expand_dims(sf_old, axis=0), np.expand_dims(target, axis=0), epochs=1)  # TODO: Edit/Validate
 
 
 
