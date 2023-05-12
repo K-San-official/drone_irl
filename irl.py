@@ -28,8 +28,25 @@ def feature_expectation(traj_list, discount):
 
 
 def execute_irl(epochs: int, gamma: float, dw: DroneWorld, traj_path: str):
-    # Step 1:
-    pass
+    """
+
+    :param epochs:
+    :param gamma:
+    :param dw:
+    :param traj_path:
+    :return:
+    """
+    w = []  # Reward weights
+    mu = []  # Feature expectations
+
+    for i in range(epochs):
+        # --- Step 1: Update reward weights ---
+
+        # --- Step 2: Generate new policy wrt. new reward weights ---
+
+        # --- Step 3: Compute new feature expectations from policy ---
+
+        pass
 
 
 if __name__ == '__main__':

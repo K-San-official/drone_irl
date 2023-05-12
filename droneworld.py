@@ -256,6 +256,7 @@ class DroneWorld:
         # Reset drone position and orientation
         self.current_pos = self.starting_pos
         self.current_angle = 90
+        self.update_state()
         # Run n steps in the simulation and log data
         for i in range(steps):
             a = pol.get_action(self.state_features)
