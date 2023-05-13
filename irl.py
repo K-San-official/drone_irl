@@ -21,7 +21,7 @@ def margin_opt(traj_list):
     pass
 
 
-def feature_expectation(traj_list, discount):
+def feature_expectation(traj_list, discount: float):
     """
     Computes the feature expectation for a set of n trajectories.
     :param traj_list:
@@ -38,6 +38,10 @@ def feature_expectation(traj_list, discount):
     return mu
 
 
+def feature_expectation_nn(nn, discount: float):
+    pass
+
+
 def q_learning(episodes: int, env: DroneWorld, w):
     """
     Reference: https://www.baeldung.com/cs/reinforcement-learning-neural-network
@@ -52,7 +56,6 @@ def q_learning(episodes: int, env: DroneWorld, w):
     gamma = 0.9
     eps = 0.5
     eps_decay_factor = 0.99
-    alpha = 0.8
 
     # Create Neural network
     nn = Sequential()
@@ -64,14 +67,14 @@ def q_learning(episodes: int, env: DroneWorld, w):
     # Reset starting position
     dw.current_pos = dw.starting_pos
 
+    # Execute Q-Learning loop for n episodes
     for i in range(episodes):
         if random.random() < eps:
             action = random.randint(0, 3)
         else:
             action = np.argmax(
-                nn.predict(np.expand_dims(dw.state_features, axis=0))  # Need to add empty dimension at the front
+                nn.predict(np.expand_dims(dw.state_features, axis=0), verbose=None)
             )
-            print(nn.predict(np.expand_dims(dw.state_features, axis=0)))
         a = 'w'
         if action == 0:
             a = 'w'
@@ -81,12 +84,20 @@ def q_learning(episodes: int, env: DroneWorld, w):
             a = 's'
         elif action == 3:
             a = 'd'
+        # Keep a copy of the old state features for the backtracking
         sf_old = dw.state_features
+        # Update environment by one step
         dw.update_drone_location(a)
+        # Calculate new reward
         reward = sum(np.multiply(dw.state_features, w))
-        target = reward + gamma + np.max(np.expand_dims(dw.state_features, axis=0))
-        # Backpropagation of weights inside the nn
-        nn.fit(np.expand_dims(sf_old, axis=0), np.expand_dims(target, axis=0), epochs=1)  # TODO: Edit/Validate
+        target_vector = nn.predict(np.expand_dims(dw.state_features, axis=0), verbose=None)[0]
+        print('Target vector', target_vector)
+        target = reward + gamma + np.max(target_vector)
+        # Update Q(s' ,a') with new target value
+        target_vector[action] = target
+        # Backpropagation of weights inside the Neural Network
+        nn.fit(np.expand_dims(sf_old, axis=0), np.expand_dims(target_vector, axis=0), epochs=1)
+    return nn
 
 
 
@@ -124,7 +135,7 @@ def execute_irl(iterations: int, gamma: float, dw: DroneWorld, traj_path: str):
                 w[j] = random.random() * 2 - 1  # Interval [-1, 1]
 
         # --- Step 2: Generate new policy wrt. new reward weights ---
-        q_learning(10, dw, w)
+        q_learning(500, dw, w)
 
         # --- Step 3: Compute new feature expectations from policy ---
 
