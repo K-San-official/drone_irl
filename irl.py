@@ -38,8 +38,16 @@ def feature_expectation(traj_list, discount: float):
     return mu
 
 
-def feature_expectation_nn(nn, discount: float):
-    pass
+def feature_expectation_nn(nn, dw: DroneWorld, discount: float, steps: int):
+    # Reset to starting position
+    dw.current_pos = dw.starting_pos
+    dw.update_state()
+
+    # Init feature expectation vector
+    mu = [0] * 16
+
+    # Update feature expectation for each step
+
 
 
 def q_learning(episodes: int, env: DroneWorld, w):
