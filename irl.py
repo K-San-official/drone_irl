@@ -9,16 +9,10 @@ from sklearn import svm
 
 from droneworld import DroneWorld
 
-def margin_opt(traj_list):
-    """
-    Computes a reward function using margin optimisation.
-    The input needs to be a list of trajectories where each trajectory is a 2d list
-    where the first index denotes the time step and the second index denotes the
-    state features and the actions in the end.
-    :param traj_list:
-    :return:
-    """
-    pass
+def policy_difference(w, mu_e, mu_i):
+    v_e = np.inner(np.array(w), np.array(mu_e))
+    v_i = np.inner(np.array(w), np.array(mu_i))
+    return abs(v_e - v_i)
 
 
 def feature_expectation(traj_list, discount: float):
@@ -34,7 +28,7 @@ def feature_expectation(traj_list, discount: float):
         for s in range(len(traj_list[0])):
             # For each state feature
             for sf in range(16):
-                mu[sf] += pow(discount, t + 1) * float(traj_list[t][s][sf]) / len(traj_list)
+                mu[sf] += (pow(discount, t + 1) * float(traj_list[t][s][sf])) / len(traj_list)
     return mu
 
 
@@ -70,6 +64,8 @@ def feature_expectation_nn(nn, dw: DroneWorld, discount: float, steps: int):
             a = 's'
         elif action == 3:
             a = 'd'
+        #print('Action ', a, ' Position: ', dw.current_pos)
+        #print(mu)
         dw.move_drone_by_action(a)
     return mu
 
@@ -122,20 +118,23 @@ def q_learning(episodes: int, dw: DroneWorld, w):
         # Calculate new reward
         reward = sum(np.multiply(dw.state_features, w))
         target_vector = nn.predict(np.expand_dims(dw.state_features, axis=0), verbose=None)[0]
-        print('Target vector', target_vector)
         target = reward + gamma + np.max(target_vector)
         # Update Q(s' ,a') with new target value
         target_vector[action] = target
         # Backpropagation of weights inside the Neural Network
-        nn.fit(np.expand_dims(sf_old, axis=0), np.expand_dims(target_vector, axis=0), epochs=1)
+        nn.fit(np.expand_dims(sf_old, axis=0), np.expand_dims(target_vector, axis=0), epochs=1, verbose=None)
     return nn
 
 
-def svm_tune(mu_e, mu_list):
+def svm_tune(w, mu_e, mu_list):
     # x are the training samples where the first sample is the expert feature expectation
-    x = [mu_e] + mu_list
+    r_e = np.multiply(w, mu_e)
+    r_list = []
+    for mu_i in mu_list:
+        r_list.append(np.multiply(w, mu_i))
+    x = [r_e] + r_list
     # y are the classification labels so the expert class is 1 and everything else is classified as -1
-    y = [1] + ([-1] * len(mu_list))
+    y = [1] + ([-1] * len(r_list))
     # Train SVM
     clf = svm.SVC(kernel='linear')
     clf.fit(x, y)
@@ -172,8 +171,8 @@ def execute_irl(iterations: int, gamma: float, dw: DroneWorld, traj_path: str):
 
     # Compute initial feature expectations (expert)
     mu_e = feature_expectation(traj_list, gamma)
-    mu_new = [0] * 16
-    print(mu_e)
+    if print_results:
+        print(f'Expert feature expectations: {mu_e}')
 
     # Execute n numbers of IRL-iterations
     for i in range(iterations):
@@ -184,25 +183,25 @@ def execute_irl(iterations: int, gamma: float, dw: DroneWorld, traj_path: str):
                 w[j] = random.random() * 2 - 1  # Interval [-1, 1]
         else:
             # Tune w using as SVM maximum margin method
-            w = svm_tune(mu_e, mu_list)[0]
-            print(f'AFTER SVM {w}')
-
+            w = svm_tune(w, mu_e, mu_list)[0]
         w_list.append(w)
         if print_results:
             print(f'Iteration {i} reward weights: {w}')
 
         # --- Step 2: Generate new policy wrt. new reward weights ---
-        new_policy_nn = q_learning(20, dw, w)
+        new_policy_nn = q_learning(500, dw, w)
 
         # --- Step 3: Compute new feature expectations from policy ---
         mu_new = feature_expectation_nn(new_policy_nn, dw, gamma, 500)
         mu_list.append(mu_new)
         if print_results:
             print(f'Iteration {i} feature expectations: {mu_new}')
+            print(f'Policy Difference: {policy_difference(w, mu_e, mu_new)}')
             print('---')
 
     if print_results:
         print(f'Expert feature expectations: {mu_e}')
+
 
     return w_list, mu_list
 
@@ -233,4 +232,4 @@ if __name__ == '__main__':
             dw.execute_policy(pol_type, n_steps)
 
     # --- Step 3: Execute IRL ---
-    execute_irl(3, 0.9, dw, directory)
+    execute_irl(100, 0.99, dw, directory)
