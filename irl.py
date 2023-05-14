@@ -4,8 +4,8 @@ import os
 import numpy as np
 
 from keras.models import Sequential
-from keras.layers import InputLayer
 from keras.layers import Dense
+from sklearn import svm
 
 from droneworld import DroneWorld
 
@@ -131,6 +131,16 @@ def q_learning(episodes: int, dw: DroneWorld, w):
     return nn
 
 
+def svm_tune(mu_e, mu_list):
+    # x are the training samples where the first sample is the expert feature expectation
+    x = [mu_e] + mu_list
+    # y are the classification labels so the expert class is 1 and everything else is classified as -1
+    y = [1] + ([-1] * len(mu_list))
+    # Train SVM
+    clf = svm.SVC(kernel='linear')
+    clf.fit(x, y)
+    return clf.coef_
+
 
 def execute_irl(iterations: int, gamma: float, dw: DroneWorld, traj_path: str):
     """
@@ -173,7 +183,10 @@ def execute_irl(iterations: int, gamma: float, dw: DroneWorld, traj_path: str):
             for j in range(len(w)):
                 w[j] = random.random() * 2 - 1  # Interval [-1, 1]
         else:
-            pass
+            # Tune w using as SVM maximum margin method
+            w = svm_tune(mu_e, mu_list)[0]
+            print(f'AFTER SVM {w}')
+
         w_list.append(w)
         if print_results:
             print(f'Iteration {i} reward weights: {w}')
@@ -220,4 +233,4 @@ if __name__ == '__main__':
             dw.execute_policy(pol_type, n_steps)
 
     # --- Step 3: Execute IRL ---
-    execute_irl(1, 0.9, dw, directory)
+    execute_irl(3, 0.9, dw, directory)
