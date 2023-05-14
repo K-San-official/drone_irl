@@ -113,7 +113,7 @@ class DroneWorld:
         y_r = np.random.rand() * (self.size - (self.dr_rad * 2)) + self.dr_rad
         return x_r, y_r
 
-    def update_drone_location(self, action: str):
+    def move_drone_by_action(self, action: str):
         """
         Performs one action in the drone world and moves the drone according to the action
         :param action:
@@ -261,4 +261,4 @@ class DroneWorld:
         for i in range(steps):
             a = pol.get_action(self.state_features)
             tj.add_line(self.state_features, a)
-            self.update_drone_location(a)
+            self.move_drone_by_action(a)

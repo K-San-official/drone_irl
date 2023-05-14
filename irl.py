@@ -39,6 +39,15 @@ def feature_expectation(traj_list, discount: float):
 
 
 def feature_expectation_nn(nn, dw: DroneWorld, discount: float, steps: int):
+    """
+    Computes the feature expectation vector for one demonstration of n steps with the state-action mapping
+    from a neural network. Decisions are deterministic, so there is no point in averaging multiple runs.
+    :param nn: Neural Network for state-action mapping
+    :param dw: Drone World
+    :param discount: Discount Factor
+    :param steps: Number of steps in the simulation
+    :return:
+    """
     # Reset to starting position
     dw.current_pos = dw.starting_pos
     dw.update_state()
@@ -47,17 +56,33 @@ def feature_expectation_nn(nn, dw: DroneWorld, discount: float, steps: int):
     mu = [0] * 16
 
     # Update feature expectation for each step
+    for i in range(steps):
+        for j in range(16):
+            mu[j] += pow(discount, i + 1) * dw.state_features[j]
+        # Predict new action
+        action = np.argmax(nn.predict(np.expand_dims(dw.state_features, axis=0), verbose=None))
+        a = 'w'
+        if action == 0:
+            a = 'w'
+        elif action == 1:
+            a = 'a'
+        elif action == 2:
+            a = 's'
+        elif action == 3:
+            a = 'd'
+        dw.move_drone_by_action(a)
+    return mu
 
 
 
-def q_learning(episodes: int, env: DroneWorld, w):
+def q_learning(episodes: int, dw: DroneWorld, w):
     """
     Reference: https://www.baeldung.com/cs/reinforcement-learning-neural-network
     Executes the famous Q-Learning algorithm to find a policy that matches the reward-function best
     :param episodes:
     :param env:
     :param w:
-    :return:
+    :return: The generated neural network itself so that it can be used for state-action mapping S -> A
     """
 
     # Define variables
@@ -80,9 +105,7 @@ def q_learning(episodes: int, env: DroneWorld, w):
         if random.random() < eps:
             action = random.randint(0, 3)
         else:
-            action = np.argmax(
-                nn.predict(np.expand_dims(dw.state_features, axis=0), verbose=None)
-            )
+            action = np.argmax(nn.predict(np.expand_dims(dw.state_features, axis=0), verbose=None))
         a = 'w'
         if action == 0:
             a = 'w'
@@ -95,7 +118,7 @@ def q_learning(episodes: int, env: DroneWorld, w):
         # Keep a copy of the old state features for the backtracking
         sf_old = dw.state_features
         # Update environment by one step
-        dw.update_drone_location(a)
+        dw.move_drone_by_action(a)
         # Calculate new reward
         reward = sum(np.multiply(dw.state_features, w))
         target_vector = nn.predict(np.expand_dims(dw.state_features, axis=0), verbose=None)[0]
@@ -118,8 +141,14 @@ def execute_irl(iterations: int, gamma: float, dw: DroneWorld, traj_path: str):
     :param traj_path:
     :return:
     """
+    print_results = True
+
     w = [0] * 16  # Reward weights
     traj_list = []  # axis 0 = trajectory | axis 1 = step | axis 2 = state feature (0-15), action (16)
+
+    # The following lists keep track of the rewards and feature expectations throughout the process of the IRL.
+    w_list = []
+    mu_list = []
 
     # Import trajectories from csv files
     for filename in os.listdir(traj_path):
@@ -133,21 +162,36 @@ def execute_irl(iterations: int, gamma: float, dw: DroneWorld, traj_path: str):
 
     # Compute initial feature expectations (expert)
     mu_e = feature_expectation(traj_list, gamma)
+    mu_new = [0] * 16
     print(mu_e)
 
+    # Execute n numbers of IRL-iterations
     for i in range(iterations):
         # --- Step 1: Update reward weights ---
         if i == 0:
             # Initialise random weights for the first iteration
             for j in range(len(w)):
                 w[j] = random.random() * 2 - 1  # Interval [-1, 1]
+        else:
+            pass
+        w_list.append(w)
+        if print_results:
+            print(f'Iteration {i} reward weights: {w}')
 
         # --- Step 2: Generate new policy wrt. new reward weights ---
-        q_learning(500, dw, w)
+        new_policy_nn = q_learning(20, dw, w)
 
         # --- Step 3: Compute new feature expectations from policy ---
+        mu_new = feature_expectation_nn(new_policy_nn, dw, gamma, 500)
+        mu_list.append(mu_new)
+        if print_results:
+            print(f'Iteration {i} feature expectations: {mu_new}')
+            print('---')
 
+    if print_results:
+        print(f'Expert feature expectations: {mu_e}')
 
+    return w_list, mu_list
 
 
 if __name__ == '__main__':

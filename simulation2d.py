@@ -135,7 +135,7 @@ if __name__ == '__main__':
         """
         Performs an action either by key input or by following a policy input
         """
-        dw.update_drone_location(a)
+        dw.move_drone_by_action(a)
         new_pos = dw.current_pos
         canvas.moveto(
             drone_sphere,
