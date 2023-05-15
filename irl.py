@@ -185,7 +185,7 @@ def execute_irl(iterations: int, gamma: float, dw: DroneWorld, traj_path: str):
         if i == 0:
             # Initialise random weights for the first iteration
             for j in range(len(w)):
-                w[j] = random.random() * 2 - 1  # Interval [-1, 1]
+                w[j] = random.random() * 0.2 - 0.1  # Interval [-1, 1]
         else:
             # Tune w using as SVM maximum margin method
             w = svm_tune(w, mu_e, mu_list)[0]
@@ -212,13 +212,18 @@ def execute_irl(iterations: int, gamma: float, dw: DroneWorld, traj_path: str):
 def plot_weights(w_list):
     x = np.arange(len(w_list))
     for i in range(16):
-        plt.plot(x, w_list[:, i], lable=f'Weight {i}')
+        plt.plot(x, np.array(w_list)[:, i], label=f'Weight {i}')
     plt.title("Weights over IRL process")
     plt.legend()
     plt.show()
 
 def plot_fe(mu_list):
-    pass
+    x = np.arange(len(mu_list))
+    for i in range(16):
+        plt.plot(x, np.array(mu_list)[:, i], label=f'FE {i}')
+    plt.title("FEs over IRL process")
+    plt.legend()
+    plt.show()
 
 
 if __name__ == '__main__':
@@ -247,7 +252,7 @@ if __name__ == '__main__':
             dw.execute_policy(pol_type, n_steps)
 
     # --- Step 3: Execute IRL ---
-    w_list, mu_list = execute_irl(5, 0.95, dw, directory)
+    w_list, mu_list = execute_irl(50, 0.95, dw, directory)
 
     # --- Step 4: Plot Results ---
     plot_weights(w_list)
