@@ -151,6 +151,7 @@ def execute_irl(iterations: int, gamma: float, dw: DroneWorld, traj_path: str):
     :return:
     """
     print_results = True
+    n_steps = 300
 
     w = [0] * 16  # Reward weights
     traj_list = []  # axis 0 = trajectory | axis 1 = step | axis 2 = state feature (0-15), action (16)
@@ -189,10 +190,10 @@ def execute_irl(iterations: int, gamma: float, dw: DroneWorld, traj_path: str):
             print(f'Iteration {i} reward weights: {w}')
 
         # --- Step 2: Generate new policy wrt. new reward weights ---
-        new_policy_nn = q_learning(500, dw, w)
+        new_policy_nn = q_learning(n_steps, dw, w)
 
         # --- Step 3: Compute new feature expectations from policy ---
-        mu_new = feature_expectation_nn(new_policy_nn, dw, gamma, 500)
+        mu_new = feature_expectation_nn(new_policy_nn, dw, gamma, n_steps)
         mu_list.append(mu_new)
         if print_results:
             print(f'Iteration {i} feature expectations: {mu_new}')
@@ -210,11 +211,11 @@ if __name__ == '__main__':
     # --- Step 1: Create environment ---
 
     dw = DroneWorld(500, 0, 0, 1)
-    n_traj = 10  # Number of trajectories that are created by the expert policies
-    n_steps = 10  # Number of steps performed for each trajectory
+    n_traj = 20  # Number of trajectories that are created by the expert policies
+    n_steps = 300  # Number of steps performed for each trajectory
     pol_type = 'avoid_o'
     directory = f'traj/{pol_type}'
-    generate_new_traj = False
+    generate_new_traj = True
 
     # --- Step 2: Create expert trajectories ---
 
@@ -232,4 +233,4 @@ if __name__ == '__main__':
             dw.execute_policy(pol_type, n_steps)
 
     # --- Step 3: Execute IRL ---
-    execute_irl(100, 0.99, dw, directory)
+    execute_irl(100, 0.95, dw, directory)

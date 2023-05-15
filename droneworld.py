@@ -60,12 +60,20 @@ class DroneWorld:
         self.current_pos = self.starting_pos
         self.current_angle = 90
 
-        # Place obstacles into the world
+        # Place obstacles in the world
         self.obst.append((100, 0, 150, 200))
         self.obst.append((0, 350, 100, 400))
         self.obst.append((320, 300, 380, 350))
         self.obst.append((290, 180, 390, 200))
         self.obst.append((400, 0, 500, 50))
+
+        # Place people in the world
+        self.people.append((22, 50))
+        self.people.append((180, 30))
+        self.people.append((400, 126))
+        self.people.append((284, 332))
+        self.people.append((130, 350))
+        self.people.append((430, 460))
 
     def create_rand_env(self):
         """
