@@ -18,6 +18,7 @@ def policy_difference(w, mu_e, mu_i):
 def feature_expectation(traj_list, discount: float):
     """
     Computes the feature expectation for a set of n trajectories.
+    :param discount:
     :param traj_list:
     :return:
     """
@@ -28,7 +29,7 @@ def feature_expectation(traj_list, discount: float):
         for s in range(len(traj_list[0])):
             # For each state feature
             for sf in range(16):
-                mu[sf] += (pow(discount, t + 1) * float(traj_list[t][s][sf])) / len(traj_list)
+                mu[sf] += (pow(discount, s + 1) * float(traj_list[t][s][sf])) / len(traj_list)
     return mu
 
 
