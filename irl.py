@@ -6,6 +6,7 @@ import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense
 from sklearn import svm
+import matplotlib.pyplot as plt
 
 from droneworld import DroneWorld
 
@@ -96,6 +97,8 @@ def q_learning(episodes: int, dw: DroneWorld, w):
 
     # Reset starting position
     dw.current_pos = dw.starting_pos
+    dw.current_angle = 90
+    dw.update_state()
 
     # Execute Q-Learning loop for n episodes
     for i in range(episodes):
@@ -204,8 +207,18 @@ def execute_irl(iterations: int, gamma: float, dw: DroneWorld, traj_path: str):
     if print_results:
         print(f'Expert feature expectations: {mu_e}')
 
-
     return w_list, mu_list
+
+def plot_weights(w_list):
+    x = np.arange(len(w_list))
+    for i in range(16):
+        plt.plot(x, w_list[:, i], lable=f'Weight {i}')
+    plt.title("Weights over IRL process")
+    plt.legend()
+    plt.show()
+
+def plot_fe(mu_list):
+    pass
 
 
 if __name__ == '__main__':
@@ -216,7 +229,7 @@ if __name__ == '__main__':
     n_steps = 300  # Number of steps performed for each trajectory
     pol_type = 'avoid_o'
     directory = f'traj/{pol_type}'
-    generate_new_traj = True
+    generate_new_traj = False
 
     # --- Step 2: Create expert trajectories ---
 
@@ -234,4 +247,8 @@ if __name__ == '__main__':
             dw.execute_policy(pol_type, n_steps)
 
     # --- Step 3: Execute IRL ---
-    execute_irl(100, 0.95, dw, directory)
+    w_list, mu_list = execute_irl(5, 0.95, dw, directory)
+
+    # --- Step 4: Plot Results ---
+    plot_weights(w_list)
+    plot_fe(mu_list)
