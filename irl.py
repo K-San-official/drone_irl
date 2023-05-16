@@ -132,13 +132,9 @@ def q_learning(episodes: int, dw: DroneWorld, w):
 
 def svm_tune(w, mu_e, mu_list):
     # x are the training samples where the first sample is the expert feature expectation
-    r_e = np.multiply(w, mu_e)
-    r_list = []
-    for mu_i in mu_list:
-        r_list.append(np.multiply(w, mu_i))
-    x = [r_e] + r_list
+    x = [mu_e] + mu_list
     # y are the classification labels so the expert class is 1 and everything else is classified as -1
-    y = [1] + ([-1] * len(r_list))
+    y = [1] + ([-1] * len(mu_list))
     # Train SVM
     clf = svm.SVC(kernel='linear')
     clf.fit(x, y)
@@ -154,7 +150,7 @@ def execute_irl(iterations: int, gamma: float, dw: DroneWorld, traj_path: str):
     :param traj_path:
     :return:
     """
-    print_results = True
+    print_results = False
     n_steps = 300
 
     w = [0] * 16  # Reward weights
@@ -234,7 +230,7 @@ if __name__ == '__main__':
     n_steps = 300  # Number of steps performed for each trajectory
     pol_type = 'avoid_o'
     directory = f'traj/{pol_type}'
-    generate_new_traj = False
+    generate_new_traj = True
 
     # --- Step 2: Create expert trajectories ---
 
@@ -252,7 +248,7 @@ if __name__ == '__main__':
             dw.execute_policy(pol_type, n_steps)
 
     # --- Step 3: Execute IRL ---
-    w_list, mu_list = execute_irl(50, 0.95, dw, directory)
+    w_list, mu_list = execute_irl(8, 0.95, dw, directory)
 
     # --- Step 4: Plot Results ---
     plot_weights(w_list)
