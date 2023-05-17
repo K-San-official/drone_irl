@@ -85,8 +85,8 @@ def q_learning(episodes: int, dw: DroneWorld, w):
 
     # Define variables
     gamma = 0.9
-    eps = 0.5
-    eps_decay_factor = 0.99
+    epsilon = 0.2
+    alpha = 0.2
 
     # Create Neural network
     nn = Sequential()
@@ -102,10 +102,11 @@ def q_learning(episodes: int, dw: DroneWorld, w):
 
     # Execute Q-Learning loop for n episodes
     for i in range(episodes):
-        if random.random() < eps:
+        q_values_old = nn.predict(np.expand_dims(dw.state_features, axis=0), verbose=None)[0]
+        if random.random() < epsilon:
             action = random.randint(0, 3)
         else:
-            action = np.argmax(nn.predict(np.expand_dims(dw.state_features, axis=0), verbose=None))
+            action = np.argmax(q_values_old)
         a = 'w'
         if action == 0:
             a = 'w'
@@ -117,16 +118,17 @@ def q_learning(episodes: int, dw: DroneWorld, w):
             a = 'd'
         # Keep a copy of the old state features for the backtracking
         sf_old = dw.state_features
-        # Update environment by one step
-        dw.move_drone_by_action(a)
+        q_old = q_values_old[action]
         # Calculate new reward
         reward = sum(np.multiply(dw.state_features, w))
-        target_vector = nn.predict(np.expand_dims(dw.state_features, axis=0), verbose=None)[0]
-        target = reward + gamma + np.max(target_vector)
+        # Update environment by one step
+        dw.move_drone_by_action(a)
+        max_next_state = max(nn.predict(np.expand_dims(dw.state_features, axis=0), verbose=None)[0])
+        target = q_old + alpha * (reward + (gamma * max_next_state) - q_old)
         # Update Q(s' ,a') with new target value
-        target_vector[action] = target
+        q_values_old[action] = target
         # Backpropagation of weights inside the Neural Network
-        nn.fit(np.expand_dims(sf_old, axis=0), np.expand_dims(target_vector, axis=0), epochs=1, verbose=None)
+        nn.fit(np.expand_dims(sf_old, axis=0), np.expand_dims(q_values_old, axis=0), epochs=1)
     return nn
 
 
@@ -151,7 +153,7 @@ def execute_irl(iterations: int, gamma: float, dw: DroneWorld, traj_path: str):
     :return:
     """
     print_results = False
-    n_steps = 300
+    n_steps = 500
 
     w = [0] * 16  # Reward weights
     traj_list = []  # axis 0 = trajectory | axis 1 = step | axis 2 = state feature (0-15), action (16)
@@ -227,7 +229,7 @@ if __name__ == '__main__':
 
     dw = DroneWorld(500, 0, 0, 1)
     n_traj = 20  # Number of trajectories that are created by the expert policies
-    n_steps = 300  # Number of steps performed for each trajectory
+    n_steps = 500  # Number of steps performed for each trajectory
     pol_type = 'avoid_o'
     directory = f'traj/{pol_type}'
     generate_new_traj = True
@@ -248,7 +250,7 @@ if __name__ == '__main__':
             dw.execute_policy(pol_type, n_steps)
 
     # --- Step 3: Execute IRL ---
-    w_list, mu_list = execute_irl(8, 0.95, dw, directory)
+    w_list, mu_list = execute_irl(8, 0.99, dw, directory)
 
     # --- Step 4: Plot Results ---
     plot_weights(w_list)

@@ -29,7 +29,7 @@ class DroneWorld:
         self.p_radius = 10  # Radius of circles representing people
 
         self.n_sensors = 7
-        self.sensor_length = 150
+        self.sensor_length = 100
         self.sensor_spread = 10  # Angle spread between sensors
         self.people_sensors = [(0, 0)] * self.n_sensors  # Tuple of (x1, y1) as an endpoint of each sensor
         self.obst_sensors = [(0, 0)] * self.n_sensors
