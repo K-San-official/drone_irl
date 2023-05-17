@@ -47,6 +47,8 @@ class DroneWorld:
             self.create_rand_env()
         elif env == 1:
             self.create_env_1()
+        elif env == 2:
+            self.create_env_2()
 
         # IRL state description
         self.state_features = [0] * ((self.n_sensors * 2) + 2)
@@ -56,6 +58,7 @@ class DroneWorld:
     def create_env_1(self):
         self.place_borders()
 
+        # Set drone start
         self.starting_pos = (50, 50)
         self.current_pos = self.starting_pos
         self.current_angle = 90
@@ -74,6 +77,29 @@ class DroneWorld:
         self.people.append((284, 332))
         self.people.append((130, 350))
         self.people.append((430, 460))
+
+    def create_env_2(self):
+        self.place_borders()
+
+        # Set drone start
+        self.starting_pos = (250, 250)
+        self.current_pos = self.starting_pos
+        self.current_angle = 90
+
+        # Place obstacles in the world
+        self.obst.append((65, 86, 89, 120))
+        self.obst.append((226, 77, 250, 133))
+        self.obst.append((200, 382, 381, 416))
+        self.obst.append((380, 170, 430, 260))
+        self.obst.append((0, 250, 150, 300))
+
+        # Place people in the world
+        self.people.append((200, 250))
+        self.people.append((134, 55))
+        self.people.append((426, 39))
+        self.people.append((80, 323))
+        self.people.append((400, 460))
+        self.people.append((360, 200))
 
     def create_rand_env(self):
         """
@@ -270,3 +296,16 @@ class DroneWorld:
             a = pol.get_action(self.state_features)
             tj.add_line(self.state_features, a)
             self.move_drone_by_action(a)
+
+    def execute_policy_get_traj(self, pol_type, steps):
+        pol = pol_type(pol_type)
+        self.current_pos = self.starting_pos
+        self.current_angle = 90
+        self.update_state()
+        traj = []
+        # Run n steps in the simulation and log data
+        for i in range(steps):
+            a = pol.get_action(self.state_features)
+            traj.append(self.state_features)
+            self.move_drone_by_action(a)
+        return traj

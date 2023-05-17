@@ -39,6 +39,9 @@ class TrajectoryLogger:
         :return:
         """
         with open(self.filepath, 'a') as f:
-            for feature in sf:
-                f.write(f'{feature},')
-            f.write(f'{a}\n')
+            for i in range(len(sf)):
+                if i != 15:
+                    f.write(f'{sf[i]},')
+                else:
+                    f.write(f'{sf[i]}')
+            f.write('\n')

@@ -13,9 +13,10 @@ if __name__ == '__main__':
     size = 500
     n_people = 25  # Number of people
     n_obstacles = 5  # Number of obstacles
+    map_type = 2
 
     # Create new instance of the drone world
-    dw = DroneWorld(size, n_people, n_obstacles, 1)
+    dw = DroneWorld(size, n_people, n_obstacles, map_type)
 
     # Trajectory logger instance
     tj = TrajectoryLogger()
@@ -26,11 +27,14 @@ if __name__ == '__main__':
         :param pol_type:
         :return:
         """
+        log_traj = False
         pol = Policy(pol_type)
-        tj.setup(pol_type)
+        if log_traj:
+            tj.setup(pol_type)
         for i in range(200):
             a = pol.get_action(dw.state_features)
-            tj.add_line(dw.state_features, a)
+            if log_traj:
+                tj.add_line(dw.state_features, a)
             time.sleep(0.05)
             perform_action(a)
             canvas.update_idletasks()

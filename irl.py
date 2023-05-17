@@ -143,34 +143,23 @@ def svm_tune(w, mu_e, mu_list):
     return clf.coef_
 
 
-def execute_irl(iterations: int, gamma: float, dw: DroneWorld, traj_path: str):
+def execute_irl(iterations: int, gamma: float, dw: DroneWorld, traj_list: list):
     """
 
     :param iterations:
     :param gamma:
     :param dw:
-    :param traj_path:
+    :param traj_list:
     :return:
     """
     print_results = True
     n_steps = 300
 
     w = [0] * 16  # Reward weights
-    traj_list = []  # axis 0 = trajectory | axis 1 = step | axis 2 = state feature (0-15), action (16)
 
     # The following lists keep track of the rewards and feature expectations throughout the process of the IRL.
     w_list = []
     mu_list = []
-
-    # Import trajectories from csv files
-    for filename in os.listdir(traj_path):
-        file = os.path.join(traj_path, filename)
-        traj = []
-        with open(file, 'r') as current_file:
-            reader = csv.reader(current_file)
-            for i, line in enumerate(reader):
-                traj.append(line)
-        traj_list.append(traj)
 
     # Compute initial feature expectations (expert)
     mu_e = feature_expectation(traj_list, gamma)
@@ -245,8 +234,8 @@ def calculate_score(traj, w):
     """
     traj_length = len(traj)
     score = 0
-    for fe in traj:
-        score += np.inner(np.array(fe), np.array(w))  # mu_i * w_i
+    for i in range(traj):
+        score += np.inner(traj[i], w)  # mu_i * w_i
     # Normalise by trajectory length to avoid bias
     score = score / traj_length
     return score
@@ -257,10 +246,10 @@ if __name__ == '__main__':
 
     dw = DroneWorld(300, 0, 0, 1)
     n_traj = 20  # Number of trajectories that are created by the expert policies
-    n_steps = 500  # Number of steps performed for each trajectory
+    n_steps = 300  # Number of steps performed for each trajectory
     pol_type = 'avoid_o'
     directory = f'traj/{pol_type}'
-    generate_new_traj = False
+    generate_new_traj = True
 
     # --- Step 2: Create expert trajectories ---
 
@@ -277,9 +266,38 @@ if __name__ == '__main__':
             print(f'Creating Trajectory {i}')
             dw.execute_policy(pol_type, n_steps)
 
+    # Import trajectories
+    traj_list = []
+    for filename in os.listdir(directory):
+        file = os.path.join(directory, filename)
+        traj = []
+        with open(file, 'r') as current_file:
+            reader = csv.reader(current_file)
+            for i, line in enumerate(reader):
+                traj.append(line)
+        traj_list.append(traj)
+
     # --- Step 3: Execute IRL ---
-    w_list, mu_list = execute_irl(40, 0.99, dw, directory)
+    w_list, mu_list = execute_irl(40, 0.99, dw, traj_list)
 
     # --- Step 4: Plot Results ---
     plot_weights(w_list)
     plot_fe(mu_list)
+
+    # --- Step 5: Gather Scores ---
+    w = w_list[-1]
+
+    print('w:')
+    print(w)
+    print('Traj 0:')
+    print(traj_list[0])
+    score_e = calculate_score(traj_list[0], w)  # First expert trajectory
+
+    # Generate random trajectory
+    traj_r = dw.execute_policy_get_traj('random', n_steps)
+    score_r = calculate_score(traj_r, w)
+
+    print(f'Expert score: {score_e}')
+    print(f'Random score: {score_r}')
+
+
