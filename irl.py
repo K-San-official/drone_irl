@@ -84,8 +84,8 @@ def q_learning(episodes: int, dw: DroneWorld, w):
     """
 
     # Define variables
-    gamma = 0.9
-    epsilon = 0.2
+    gamma = 0.99
+    epsilon = 0.3
     alpha = 0.2
 
     # Create Neural network
@@ -128,7 +128,7 @@ def q_learning(episodes: int, dw: DroneWorld, w):
         # Update Q(s' ,a') with new target value
         q_values_old[action] = target
         # Backpropagation of weights inside the Neural Network
-        nn.fit(np.expand_dims(sf_old, axis=0), np.expand_dims(q_values_old, axis=0), epochs=1)
+        nn.fit(np.expand_dims(sf_old, axis=0), np.expand_dims(q_values_old, axis=0), epochs=1, verbose=None)
     return nn
 
 
@@ -152,8 +152,8 @@ def execute_irl(iterations: int, gamma: float, dw: DroneWorld, traj_path: str):
     :param traj_path:
     :return:
     """
-    print_results = False
-    n_steps = 500
+    print_results = True
+    n_steps = 300
 
     w = [0] * 16  # Reward weights
     traj_list = []  # axis 0 = trajectory | axis 1 = step | axis 2 = state feature (0-15), action (16)
@@ -227,12 +227,12 @@ def plot_fe(mu_list):
 if __name__ == '__main__':
     # --- Step 1: Create environment ---
 
-    dw = DroneWorld(500, 0, 0, 1)
+    dw = DroneWorld(300, 0, 0, 1)
     n_traj = 20  # Number of trajectories that are created by the expert policies
     n_steps = 500  # Number of steps performed for each trajectory
     pol_type = 'avoid_o'
     directory = f'traj/{pol_type}'
-    generate_new_traj = True
+    generate_new_traj = False
 
     # --- Step 2: Create expert trajectories ---
 
@@ -250,7 +250,7 @@ if __name__ == '__main__':
             dw.execute_policy(pol_type, n_steps)
 
     # --- Step 3: Execute IRL ---
-    w_list, mu_list = execute_irl(8, 0.99, dw, directory)
+    w_list, mu_list = execute_irl(40, 0.99, dw, directory)
 
     # --- Step 4: Plot Results ---
     plot_weights(w_list)
