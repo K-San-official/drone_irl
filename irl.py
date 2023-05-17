@@ -207,7 +207,13 @@ def execute_irl(iterations: int, gamma: float, dw: DroneWorld, traj_path: str):
 
     return w_list, mu_list
 
+
 def plot_weights(w_list):
+    """
+    Plots all reward weights during the IRL process
+    :param w_list:
+    :return:
+    """
     x = np.arange(len(w_list))
     for i in range(16):
         plt.plot(x, np.array(w_list)[:, i], label=f'Weight {i}')
@@ -215,13 +221,35 @@ def plot_weights(w_list):
     plt.legend()
     plt.show()
 
+
 def plot_fe(mu_list):
+    """
+    Plots all feature expectations during the IRL process
+    :param mu_list:
+    :return:
+    """
     x = np.arange(len(mu_list))
     for i in range(16):
         plt.plot(x, np.array(mu_list)[:, i], label=f'FE {i}')
     plt.title("FEs over IRL process")
     plt.legend()
     plt.show()
+
+
+def calculate_score(traj, w):
+    """
+    Calculates the score that a trajectory achieved given the reward weights w
+    :param traj: trajectory with n (rows) steps and m (columns) features
+    :param w: reward weight vector of size m
+    :return: overall score of the trajectory
+    """
+    traj_length = len(traj)
+    score = 0
+    for fe in traj:
+        score += np.inner(np.array(fe), np.array(w))  # mu_i * w_i
+    # Normalise by trajectory length to avoid bias
+    score = score / traj_length
+    return score
 
 
 if __name__ == '__main__':
