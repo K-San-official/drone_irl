@@ -298,7 +298,7 @@ class DroneWorld:
             self.move_drone_by_action(a)
 
     def execute_policy_get_traj(self, pol_type, steps):
-        pol = pol_type(pol_type)
+        pol = Policy(pol_type)
         self.current_pos = self.starting_pos
         self.current_angle = 90
         self.update_state()

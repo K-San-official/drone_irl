@@ -236,7 +236,8 @@ def calculate_score(traj, w):
     traj_length = len(traj)
     score = 0
     for i in range(len(traj)):
-        score += np.inner(traj[i], w)  # mu_i * w_i
+        # Convert trajectory elements from str to float if necessary
+        score += np.inner([float(x) for x in traj[i]], w)  # mu_i * w_i
     # Normalise by trajectory length to avoid bias
     score = score / traj_length
     return score
@@ -279,7 +280,7 @@ if __name__ == '__main__':
         traj_list.append(traj)
 
     # --- Step 3: Execute IRL ---
-    w_list, mu_list = execute_irl(40, 0.99, dw, traj_list)
+    w_list, mu_list = execute_irl(5, 0.99, dw, traj_list)
 
     # --- Step 4: Plot Results ---
     plot_weights(w_list)
