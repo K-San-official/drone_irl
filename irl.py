@@ -101,6 +101,9 @@ def q_learning(episodes: int, dw: DroneWorld, w):
     dw.current_angle = 90
     dw.update_state()
 
+    # Counts the amount of each action that is taken during each iteration
+    action_count = [0] * 4
+
     # Execute Q-Learning loop for n episodes
     for i in range(episodes):
         q_values_old = nn.predict(np.expand_dims(dw.state_features, axis=0), verbose=None)[0]
@@ -117,6 +120,7 @@ def q_learning(episodes: int, dw: DroneWorld, w):
             a = 's'
         elif action == 3:
             a = 'd'
+        action_count[action] += 1
         # Keep a copy of the old state features for the backtracking
         sf_old = dw.state_features
         q_old = q_values_old[action]
@@ -130,6 +134,7 @@ def q_learning(episodes: int, dw: DroneWorld, w):
         q_values_old[action] = target
         # Backpropagation of weights inside the Neural Network
         nn.fit(np.expand_dims(sf_old, axis=0), np.expand_dims(q_values_old, axis=0), epochs=1, verbose=None)
+    print(f'Action Count (w, a, s, d): {action_count}')
     return nn
 
 
@@ -144,7 +149,7 @@ def svm_tune(w, mu_e, mu_list):
     return clf.coef_
 
 
-def execute_irl(iterations: int, gamma: float, dw: DroneWorld, traj_list: list):
+def execute_irl(iterations: int, n_steps, gamma: float, dw: DroneWorld, traj_list: list):
     """
 
     :param iterations:
@@ -154,7 +159,6 @@ def execute_irl(iterations: int, gamma: float, dw: DroneWorld, traj_list: list):
     :return:
     """
     print_results = True
-    n_steps = 300
 
     w = [0] * 16  # Reward weights
 
@@ -246,12 +250,12 @@ def calculate_score(traj, w):
 if __name__ == '__main__':
     # --- Step 1: Create environment ---
 
-    dw = DroneWorld(300, 0, 0, 1)
+    dw = DroneWorld(500, 0, 0, 1)
     n_traj = 20  # Number of trajectories that are created by the expert policies
-    n_steps = 300  # Number of steps performed for each trajectory
+    n_steps = 500  # Number of steps performed for each trajectory
     pol_type = 'avoid_o'
     directory = f'traj/{pol_type}'
-    generate_new_traj = True
+    generate_new_traj = False
 
     # --- Step 2: Create expert trajectories ---
 
@@ -280,7 +284,7 @@ if __name__ == '__main__':
         traj_list.append(traj)
 
     # --- Step 3: Execute IRL ---
-    w_list, mu_list = execute_irl(5, 0.99, dw, traj_list)
+    w_list, mu_list = execute_irl(20, n_steps, 0.99, dw, traj_list)
 
     # --- Step 4: Plot Results ---
     plot_weights(w_list)
