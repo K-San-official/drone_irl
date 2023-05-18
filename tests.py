@@ -17,8 +17,11 @@ class Testing(unittest.TestCase):
         d = (1, 0)
         self.assertEqual(ut.line_intersection_coordinates((a, b), (c, d)), (0.5, 0.5))
 
-    def testScoreCalculation(self):
-        pass
+    def testCalculateScore(self):
+        traj = [[1, 1], [1, 1], [0, 0], [0, 1], [0, 0]]
+        w = [1, 1]
+        self.assertEqual(irl.calculate_score(traj, w), 1)
+
 
 if __name__ == '__main__':
     unittest.main()

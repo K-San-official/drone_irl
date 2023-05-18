@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 
 from droneworld import DroneWorld
 
+
 def policy_difference(w, mu_e, mu_i):
     v_e = np.inner(np.array(w), np.array(mu_e))
     v_i = np.inner(np.array(w), np.array(mu_i))
@@ -234,7 +235,7 @@ def calculate_score(traj, w):
     """
     traj_length = len(traj)
     score = 0
-    for i in range(traj):
+    for i in range(len(traj)):
         score += np.inner(traj[i], w)  # mu_i * w_i
     # Normalise by trajectory length to avoid bias
     score = score / traj_length
