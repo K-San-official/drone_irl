@@ -250,7 +250,7 @@ def calculate_score(traj, w):
 if __name__ == '__main__':
     # --- Step 1: Create environment ---
 
-    dw = DroneWorld(500, 0, 0, 1)
+    dw = DroneWorld(500, 0, 0, 2)
     n_traj = 20  # Number of trajectories that are created by the expert policies
     n_steps = 500  # Number of steps performed for each trajectory
     pol_type = 'avoid_o'
