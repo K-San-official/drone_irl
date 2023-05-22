@@ -76,16 +76,21 @@ if __name__ == '__main__':
 
     # --- IRL Training ---
 
-    w_list, mu_list = execute_irl(40, n_steps, 0.99, dw, traj_list_training)
+    w_list, mu_list = execute_irl(3, n_steps, 0.99, dw, traj_list_training)
     w = w_list[-1]
 
-    score_pol_1 = map(lambda x: calculate_score(x, w), traj_list_1)
-    score_pol_2 = map(lambda x: calculate_score(x, w), traj_list_2)
+    score_pol_1 = [calculate_score(traj, w) for traj in traj_list_1]
+    score_pol_2 = [calculate_score(traj, w) for traj in traj_list_2]
+
+    print(score_pol_1)
+    print(score_pol_2)
+
+    # TODO: Save scores to file
 
     plt.hist(score_pol_1, density=True, bins=30)  # density=False would make counts
     plt.hist(score_pol_2, density=True, bins=30)  # density=False would make counts
     plt.ylabel('Probability')
     plt.xlabel('Data')
-    plt.plot()
+    plt.show()
 
 
