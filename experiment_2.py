@@ -76,21 +76,27 @@ if __name__ == '__main__':
 
     # --- IRL Training ---
 
-    w_list, mu_list = execute_irl(20, n_steps, 0.99, dw, traj_list_training)
+    w_list, mu_list = execute_irl(40, n_steps, 0.99, dw, traj_list_training)
     w = w_list[-1]
 
     score_pol_1 = [calculate_score(traj, w) for traj in traj_list_1]
     score_pol_2 = [calculate_score(traj, w) for traj in traj_list_2]
 
-    print(score_pol_1)
-    print(score_pol_2)
+    result_directory = 'results/experiment_2'
+    with open(f'{result_directory}/scores_pol_1', 'w') as f:
+        for e in score_pol_1:
+            f.write(f'{e}\n')
 
-    # TODO: Save scores to file
+    with open(f'{result_directory}/scores_pol_2', 'w') as f:
+        for e in score_pol_1:
+            f.write(f'{e}\n')
 
-    plt.hist(score_pol_1, density=True, bins=30)  # density=False would make counts
-    plt.hist(score_pol_2, density=True, bins=30)  # density=False would make counts
-    plt.ylabel('Probability')
-    plt.xlabel('Data')
+    label = [f'Policy {pol_1}', f'Policy {pol_2}']
+    plt.hist([score_pol_1, score_pol_2], density=False, bins=30, label=label)
+    plt.legend()
+    plt.ylabel('Count')
+    plt.xlabel('Trajectory Score')
+    plt.savefig(f'{result_directory}/ex_2_hist.png')
     plt.show()
 
 
