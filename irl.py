@@ -92,7 +92,8 @@ def q_learning(episodes: int, dw: DroneWorld, w):
     # Create Neural network
     nn = Sequential()
     nn.add(Dense(16, activation='relu'))
-    nn.add(Dense(16, activation='relu'))
+    nn.add(Dense(32, activation='relu'))
+    nn.add(Dense(32, activation='relu'))
     nn.add(Dense(4, activation='linear'))
     nn.compile(loss='mse', optimizer='adam', metrics=['mae'])
 

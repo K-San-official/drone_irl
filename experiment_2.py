@@ -16,7 +16,7 @@ if __name__ == '__main__':
     pol_2 = 'random'
     directory_1 = f'traj/{pol_1}'
     directory_2 = f'traj/{pol_2}'
-    generate_new_traj = False  # Flag that decides whether new trajectories should be recorded
+    generate_new_traj = True  # Flag that decides whether new trajectories should be recorded
 
     if generate_new_traj:
         # Clear old files in folder
@@ -83,11 +83,11 @@ if __name__ == '__main__':
     score_pol_2 = [calculate_score(traj, w) for traj in traj_list_2]
 
     result_directory = 'results/experiment_2'
-    with open(f'{result_directory}/scores_pol_1', 'w') as f:
+    with open(f'{result_directory}/scores_pol_1.txt', 'w') as f:
         for e in score_pol_1:
             f.write(f'{e}\n')
 
-    with open(f'{result_directory}/scores_pol_2', 'w') as f:
+    with open(f'{result_directory}/scores_pol_2.txt', 'w') as f:
         for e in score_pol_1:
             f.write(f'{e}\n')
 
