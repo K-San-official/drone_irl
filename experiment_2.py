@@ -88,7 +88,7 @@ if __name__ == '__main__':
             f.write(f'{e}\n')
 
     with open(f'{result_directory}/scores_pol_2.txt', 'w') as f:
-        for e in score_pol_1:
+        for e in score_pol_2:
             f.write(f'{e}\n')
 
     label = [f'Policy {pol_1}', f'Policy {pol_2}']

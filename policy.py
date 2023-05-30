@@ -32,12 +32,12 @@ class Policy:
         Back:       10%
         :return:
         """
-        x = random.randint(0, 9)
-        if x < 5:
+        x = random.randint(0, 3)
+        if x == 0:
             return 'w'
-        elif x == 5 or x == 6:
+        elif x == 1:
             return 'a'
-        elif x == 7 or x == 8:
+        elif x == 2:
             return 'd'
         else:
             return 's'
