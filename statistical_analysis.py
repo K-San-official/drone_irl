@@ -23,5 +23,5 @@ if __name__ == '__main__':
     print(arr_1)
     print(arr_2)
 
-    print(stats.ttest_ind(a=arr_1, b=arr_2, equal_var=True))
+    print(stats.ttest_ind(a=arr_1, b=arr_2, equal_var=False))
 
