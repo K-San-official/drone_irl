@@ -300,7 +300,7 @@ if __name__ == '__main__':
         traj_list.append(traj)
 
     # --- Step 3: Execute IRL ---
-    w_list, mu_list = execute_irl(100, n_steps, 0.99, dw, traj_list)
+    w_list, mu_list = execute_irl(80, n_steps, 0.99, dw, traj_list)
 
     # --- Step 4: Plot Results ---
     plot_weights(w_list)
