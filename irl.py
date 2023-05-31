@@ -57,26 +57,21 @@ def feature_expectation_nn(nn, dw: DroneWorld, discount: float, steps: int, crea
 
     heatmap = heatmap_generator.Heatmap((500, 500), 0.1)
 
-    wind = 0.1
-
     # Update feature expectation for each step
     for i in range(steps):
         for j in range(16):
             mu[j] += pow(discount, i + 1) * dw.state_features[j]
         # Predict new action
-        if random.random() <= wind:
-            a = utils.get_random_action()
-        else:
-            action = np.argmax(nn.predict(np.expand_dims(dw.state_features, axis=0), verbose=None))
+        action = np.argmax(nn.predict(np.expand_dims(dw.state_features, axis=0), verbose=None))
+        a = 'w'
+        if action == 0:
             a = 'w'
-            if action == 0:
-                a = 'w'
-            elif action == 1:
-                a = 'a'
-            elif action == 2:
-                a = 's'
-            elif action == 3:
-                a = 'd'
+        elif action == 1:
+            a = 'a'
+        elif action == 2:
+            a = 's'
+        elif action == 3:
+            a = 'd'
         dw.move_drone_by_action(a)
         if create_heatmap:
             heatmap.track_position(dw.current_pos)

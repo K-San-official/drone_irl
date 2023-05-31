@@ -76,7 +76,7 @@ if __name__ == '__main__':
 
     # --- IRL Training ---
 
-    w_list, mu_list = execute_irl(40, n_steps, 0.99, dw, traj_list_training)
+    w_list, mu_list = execute_irl(80, n_steps, 0.99, dw, traj_list_training)
     w = w_list[-1]
 
     score_pol_1 = [calculate_score(traj, w) for traj in traj_list_1]
