@@ -8,6 +8,8 @@ from keras.layers import Dense
 from sklearn import svm
 import matplotlib.pyplot as plt
 
+import heatmap_generator
+import utils
 from droneworld import DroneWorld
 
 
@@ -35,7 +37,7 @@ def feature_expectation(traj_list, discount: float):
     return mu
 
 
-def feature_expectation_nn(nn, dw: DroneWorld, discount: float, steps: int):
+def feature_expectation_nn(nn, dw: DroneWorld, discount: float, steps: int, create_heatmap=False):
     """
     Computes the feature expectation vector for one demonstration of n steps with the state-action mapping
     from a neural network. Decisions are deterministic, so there is no point in averaging multiple runs.
@@ -43,6 +45,7 @@ def feature_expectation_nn(nn, dw: DroneWorld, discount: float, steps: int):
     :param dw: Drone World
     :param discount: Discount Factor
     :param steps: Number of steps in the simulation
+    :param create_heatmap: Create a heatmap of where the drone is going
     :return:
     """
     # Reset to starting position
@@ -52,24 +55,36 @@ def feature_expectation_nn(nn, dw: DroneWorld, discount: float, steps: int):
     # Init feature expectation vector
     mu = [0] * 16
 
+    heatmap = heatmap_generator.Heatmap((500, 500), 0.1)
+
+    wind = 0.1
+
     # Update feature expectation for each step
     for i in range(steps):
         for j in range(16):
             mu[j] += pow(discount, i + 1) * dw.state_features[j]
         # Predict new action
-        action = np.argmax(nn.predict(np.expand_dims(dw.state_features, axis=0), verbose=None))
-        a = 'w'
-        if action == 0:
+        if random.random() <= wind:
+            a = utils.get_random_action()
+        else:
+            action = np.argmax(nn.predict(np.expand_dims(dw.state_features, axis=0), verbose=None))
             a = 'w'
-        elif action == 1:
-            a = 'a'
-        elif action == 2:
-            a = 's'
-        elif action == 3:
-            a = 'd'
-        #print('Action ', a, ' Position: ', dw.current_pos)
-        #print(mu)
+            if action == 0:
+                a = 'w'
+            elif action == 1:
+                a = 'a'
+            elif action == 2:
+                a = 's'
+            elif action == 3:
+                a = 'd'
         dw.move_drone_by_action(a)
+        if create_heatmap:
+            heatmap.track_position(dw.current_pos)
+
+    if create_heatmap:
+        heatmap.print_grid()
+        heatmap.create_heatmap()
+
     return mu
 
 
@@ -190,7 +205,7 @@ def execute_irl(iterations: int, n_steps, gamma: float, dw: DroneWorld, traj_lis
         new_policy_nn = q_learning(n_steps, dw, w)
 
         # --- Step 3: Compute new feature expectations from policy ---
-        mu_new = feature_expectation_nn(new_policy_nn, dw, gamma, n_steps)
+        mu_new = feature_expectation_nn(new_policy_nn, dw, gamma, n_steps, create_heatmap=True)
         mu_list.append(mu_new)
         if print_results:
             print(f'Iteration {i} feature expectations: {mu_new}')
@@ -285,7 +300,7 @@ if __name__ == '__main__':
         traj_list.append(traj)
 
     # --- Step 3: Execute IRL ---
-    w_list, mu_list = execute_irl(20, n_steps, 0.99, dw, traj_list)
+    w_list, mu_list = execute_irl(100, n_steps, 0.99, dw, traj_list)
 
     # --- Step 4: Plot Results ---
     plot_weights(w_list)

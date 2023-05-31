@@ -1,3 +1,5 @@
+import random
+
 import numpy as np
 
 """
@@ -83,4 +85,16 @@ def min_dist_line_seg_point(l, p):
         xx = l[0] + flag * dx_l
         yy = l[1] + flag * dy_l
     return dist(p, (xx, yy)), dist((l[0], l[1]), (xx, yy))
+
+
+def get_random_action():
+    x = random.randint(0, 3)
+    if x == 0:
+        return 'w'
+    elif x == 1:
+        return 'a'
+    elif x == 2:
+        return 's'
+    else:
+        return 'd'
 
