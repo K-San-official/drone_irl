@@ -179,8 +179,8 @@ class DroneWorld:
             # Check if new position is not inside obstacles
             if not self.is_in_obstacle((x, y)):
                 self.current_pos = (x, y)
-            else:
-                self.current_angle = (self.current_angle + 180) % 360
+            #else:
+               # self.current_angle = (self.current_angle + 180) % 360
         self.update_state()
         # print("Drone Postion: {}, \t Angle: {}".format(self.current_pos, self.current_angle))
 

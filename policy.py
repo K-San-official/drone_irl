@@ -77,6 +77,8 @@ class Policy:
             return 'a'
 
     def get_action_avoid_obstacles(self, sf):
+
+    def get_action_avoid_obstacles_old(self, sf):
         """
         Returns an action that actively avoids obstacles in the field.
         People are ignored.
