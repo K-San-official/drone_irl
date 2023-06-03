@@ -56,7 +56,7 @@ if __name__ == '__main__':
     button_avoid_obst_policy = tk.Button(root, text='Avoid Obstacle Policy', command=lambda: execute_policy('avoid_o'))
     button_avoid_obst_policy.pack(side=tk.BOTTOM)
 
-    button_avoid_all_policy = tk.Button(root, text='Avoid All Policy',command=lambda: execute_policy('avoid_a'))
+    button_avoid_all_policy = tk.Button(root, text='Avoid All Policy', command=lambda: execute_policy('avoid_a'))
     button_avoid_all_policy.pack(side=tk.BOTTOM)
 
     # --- Set up elements ---

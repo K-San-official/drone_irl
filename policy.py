@@ -61,6 +61,8 @@ class Policy:
                 left_sum += sf[i]
             if i >= 4:
                 right_sum += sf[i]
+        if sf[3] > 0.8:
+            return 's'
         if left_sum > 0.7 and left_sum > right_sum:
             return 'd'
         if max(sf[0:2]) > 0.7:
@@ -151,4 +153,51 @@ class Policy:
         :param sf:
         :return:
         """
-        pass
+        # With a certain percentage, execute random action
+        x = random.random()
+        if x <= self.wind:
+            return self.get_action_random()
+        obst_left_sum = 0
+        obst_right_sum = 0
+        obst_total_sum = sum(sf[int(len(sf) / 2) - 2:-2])
+        # Calculate sensor detections on both sides
+        for i in range(int(len(sf) / 2) - 2):
+            if i <= 2:
+                obst_left_sum += sf[i + 7]
+            if i >= 4:
+                obst_right_sum += sf[i + 7]
+        if obst_left_sum > 1.5 and obst_left_sum > obst_right_sum:
+            return 'd'
+        if max(sf[7:9]) > 0.8:
+            return 'd'
+        if max(sf[11:13]) > 0.8:
+            return 'a'
+        if obst_right_sum > 1.5:
+            return 'a'
+        if obst_total_sum > 4.5:
+            return 's'
+
+        people_left_sum = 0
+        people_right_sum = 0
+        total_sum = sum(sf[0:6])
+        # Calculate sensor detections on both sides
+        for i in range(int(len(sf) / 2) - 2):
+            if i <= 2:
+                people_left_sum += sf[i]
+            if i >= 4:
+                people_right_sum += sf[i]
+        if sf[3] > 0.8:
+            return 's'
+        if people_left_sum > 0.7 and people_left_sum > people_right_sum:
+            return 'd'
+        if max(sf[0:2]) > 0.7:
+            return 'd'
+        if max(sf[4:6]) > 0.7:
+            return 'a'
+        if people_right_sum > 0.7:
+            return 'a'
+        if total_sum > 3.5:
+            return 's'
+        else:
+            return 'w'
+

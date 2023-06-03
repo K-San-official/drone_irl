@@ -114,6 +114,7 @@ class DroneWorld:
         self.people.append((50, 200))
         self.people.append((213, 201))
         self.people.append((140, 189))
+        self.people.append((50, 450))
 
     def create_rand_env(self):
         """
