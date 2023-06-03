@@ -54,29 +54,52 @@ class Policy:
             return self.get_action_random()
         left_sum = 0
         right_sum = 0
-        # Technically this is not part of the policy to take obstacles into consideration.
-        # If the drone is facing a wall and would get stuck, the next part is to unstuck it.
-        obst_sum = sum(sf[int(len(sf) / 2) - 2:-2])
-        if obst_sum > 2 and sf[-1] > 0.95:
-            return 'd'
-        total_sum = sum(sf[:int(len(sf) / 2) - 2])
-        if total_sum < 0.3:
-            return 'w'
-        if total_sum > 2.6:
-            return 's'
-        # Iterate over all people detecting sensors
+        total_sum = sum(sf[0:6])
+        # Calculate sensor detections on both sides
         for i in range(int(len(sf) / 2) - 2):
             if i <= 2:
                 left_sum += sf[i]
             if i >= 4:
                 right_sum += sf[i]
-        # If the left sensors detect more, then turn right and vice-versa
-        if left_sum > right_sum:
+        if left_sum > 0.7 and left_sum > right_sum:
             return 'd'
-        else:
+        if max(sf[0:2]) > 0.7:
+            return 'd'
+        if max(sf[4:6]) > 0.7:
             return 'a'
+        if right_sum > 0.7:
+            return 'a'
+        if total_sum > 3.5:
+            return 's'
+        else:
+            return 'w'
 
     def get_action_avoid_obstacles(self, sf):
+        # With a certain percentage, execute random action
+        x = random.random()
+        if x <= self.wind:
+            return self.get_action_random()
+        left_sum = 0
+        right_sum = 0
+        total_sum = sum(sf[int(len(sf) / 2) - 2:-2])
+        # Calculate sensor detections on both sides
+        for i in range(int(len(sf) / 2) - 2):
+            if i <= 2:
+                left_sum += sf[i + 7]
+            if i >= 4:
+                right_sum += sf[i + 7]
+        if left_sum > 1.5 and left_sum > right_sum:
+            return 'd'
+        if max(sf[7:9]) > 0.8:
+            return 'd'
+        if max(sf[11:13]) > 0.8:
+            return 'a'
+        if right_sum > 1.5:
+            return 'a'
+        if total_sum > 4.5:
+            return 's'
+        else:
+            return 'w'
 
     def get_action_avoid_obstacles_old(self, sf):
         """

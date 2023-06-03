@@ -1,3 +1,5 @@
+import random
+
 import numpy as np
 import utils as ut
 
@@ -29,8 +31,8 @@ class DroneWorld:
         self.p_radius = 10  # Radius of circles representing people
 
         self.n_sensors = 7
-        self.sensor_length = 100
-        self.sensor_spread = 20  # Angle spread between sensors
+        self.sensor_length = 200
+        self.sensor_spread = 15  # Angle spread between sensors
         self.people_sensors = [(0, 0)] * self.n_sensors  # Tuple of (x1, y1) as an endpoint of each sensor
         self.obst_sensors = [(0, 0)] * self.n_sensors
 
@@ -179,8 +181,9 @@ class DroneWorld:
             # Check if new position is not inside obstacles
             if not self.is_in_obstacle((x, y)):
                 self.current_pos = (x, y)
-            #else:
-               # self.current_angle = (self.current_angle + 180) % 360
+            else:
+                angle_randomness = (random.random() * 40) - 20
+                self.current_angle = (self.current_angle + 180 + angle_randomness) % 360
         self.update_state()
         # print("Drone Postion: {}, \t Angle: {}".format(self.current_pos, self.current_angle))
 

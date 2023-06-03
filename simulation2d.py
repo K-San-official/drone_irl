@@ -13,7 +13,7 @@ if __name__ == '__main__':
     size = 500
     n_people = 25  # Number of people
     n_obstacles = 5  # Number of obstacles
-    map_type = 2  # 0 = random map
+    map_type = 0  # 0 = random map
 
     # Create new instance of the drone world
     dw = DroneWorld(size, n_people, n_obstacles, map_type)
