@@ -6,6 +6,7 @@ import utils as ut
 from policy import Policy
 from trajectory_logger import TrajectoryLogger
 
+
 class DroneWorld:
     """
     This class stores all the information of the drone world.
@@ -102,6 +103,17 @@ class DroneWorld:
         self.people.append((80, 323))
         self.people.append((400, 460))
         self.people.append((360, 200))
+        self.people.append((355, 261))
+        self.people.append((20, 159))
+        self.people.append((450, 450))
+        self.people.append((360, 294))
+        self.people.append((365, 240))
+        self.people.append((265, 120))
+        self.people.append((180, 430))
+        self.people.append((320, 80))
+        self.people.append((50, 200))
+        self.people.append((213, 201))
+        self.people.append((140, 189))
 
     def create_rand_env(self):
         """
