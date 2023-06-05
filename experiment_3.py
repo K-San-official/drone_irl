@@ -1,14 +1,10 @@
-import os
-import csv
-import matplotlib.pyplot as plt
-
 from irl import *
 from droneworld import DroneWorld
 
 if __name__ == '__main__':
 
     # Create environment
-    dw = DroneWorld(500, 0, 0, 2)
+    dw = DroneWorld(500, 18, 5, 0)
     n_traj = 100
     n_traj_training = 20
     n_steps = 500
@@ -35,6 +31,9 @@ if __name__ == '__main__':
             print(f'Creating Trajectory {i + 1}')
             dw.execute_policy(pol_1, n_steps)
             dw.execute_policy(pol_2, n_steps)
+
+        # Change map in the environment for the training trajectories
+        dw = DroneWorld(500, 0, 0, 2)
 
         for i in range(n_traj_training):
             print(f'Creating Training Trajectory {i + 1}')
@@ -82,7 +81,7 @@ if __name__ == '__main__':
     score_pol_1 = [calculate_score(traj, w) for traj in traj_list_1]
     score_pol_2 = [calculate_score(traj, w) for traj in traj_list_2]
 
-    result_directory = 'results/experiment_2'
+    result_directory = 'results/experiment_3'
     with open(f'{result_directory}/scores_pol_1.txt', 'w') as f:
         for e in score_pol_1:
             f.write(f'{e}\n')
