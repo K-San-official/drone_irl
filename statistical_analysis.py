@@ -20,8 +20,10 @@ if __name__ == '__main__':
 
     arr_1 = np.array(sample_1[:sample_size])
     arr_2 = np.array(sample_2[:sample_size])
-    print(arr_1)
-    print(arr_2)
 
+    print('---')
+    print(f'Sample 1 -> Mean: {round(np.mean(arr_1), 4)}, Var: {round(np.var(arr_1), 4)}')
+    print(f'Sample 2 -> Mean: {round(np.mean(arr_2), 4)}, Var: {round(np.var(arr_2), 4)}')
     print(stats.ttest_ind(a=arr_1, b=arr_2, equal_var=False))
+
 
