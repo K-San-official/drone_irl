@@ -218,7 +218,6 @@ def plot_weights(w_list):
     :return:
     """
     x = np.arange(len(w_list))
-    x = np.arange(0, 5, 0.1)
     y = np.sin(x)
     for i in range(16):
         if i < 7:
