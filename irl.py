@@ -9,7 +9,6 @@ from sklearn import svm
 import matplotlib.pyplot as plt
 
 import heatmap_generator
-import utils
 from droneworld import DroneWorld
 
 
@@ -81,7 +80,6 @@ def feature_expectation_nn(nn, dw: DroneWorld, discount: float, steps: int, crea
         heatmap.create_heatmap()
 
     return mu
-
 
 
 def q_learning(episodes: int, dw: DroneWorld, w):
@@ -220,9 +218,16 @@ def plot_weights(w_list):
     :return:
     """
     x = np.arange(len(w_list))
+    x = np.arange(0, 5, 0.1)
+    y = np.sin(x)
     for i in range(16):
-        plt.plot(x, np.array(w_list)[:, i], label=f'Weight {i}')
-    plt.title("Weights over IRL process")
+        if i < 7:
+            plt.plot(x, np.array(w_list)[:, i], label=f'Weight {i}', linestyle='dotted')
+        elif i >= 7 < 14:
+            plt.plot(x, np.array(w_list)[:, i], label=f'Weight {i}', linestyle='dashed')
+        else:
+            plt.plot(x, np.array(w_list)[:, i], label=f'Weight {i}', linestyle='solid')
+    #plt.title("Weights over IRL process")
     plt.legend()
     plt.show()
 
@@ -235,8 +240,13 @@ def plot_fe(mu_list):
     """
     x = np.arange(len(mu_list))
     for i in range(16):
-        plt.plot(x, np.array(mu_list)[:, i], label=f'FE {i}')
-    plt.title("FEs over IRL process")
+        if i < 7:
+            plt.plot(x, np.array(mu_list)[:, i], label=f'FE {i}', linestyle='dotted')
+        elif i >= 7 < 14:
+            plt.plot(x, np.array(mu_list)[:, i], label=f'FE {i}', linestyle='dashed')
+        else:
+            plt.plot(x, np.array(mu_list)[:, i], label=f'FE {i}', linestyle='solid')
+    #plt.title("FEs over IRL process")
     plt.legend()
     plt.show()
 
@@ -295,7 +305,7 @@ if __name__ == '__main__':
         traj_list.append(traj)
 
     # --- Step 3: Execute IRL ---
-    w_list, mu_list = execute_irl(80, n_steps, 0.99, dw, traj_list)
+    w_list, mu_list = execute_irl(10, n_steps, 0.99, dw, traj_list)
 
     # --- Step 4: Plot Results ---
     plot_weights(w_list)
