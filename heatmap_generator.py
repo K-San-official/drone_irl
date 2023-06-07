@@ -22,4 +22,6 @@ class Heatmap:
 
     def create_heatmap(self):
         plt.imshow(self.grid, cmap='hot', interpolation='nearest')
+        plt.xlabel('x-coordinate')
+        plt.ylabel('y-coordinate')
         plt.show()

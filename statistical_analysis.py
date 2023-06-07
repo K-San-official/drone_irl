@@ -2,8 +2,8 @@ import scipy.stats as stats
 import numpy as np
 
 if __name__ == '__main__':
-    sample_1_path = 'results/experiment_3/scores_pol_1.txt'
-    sample_2_path = 'results/experiment_3/scores_pol_2.txt'
+    sample_1_path = 'results/experiment_2/scores_pol_1.txt'
+    sample_2_path = 'results/experiment_2/scores_pol_2.txt'
     sample_size = 100
 
     sample_1 = []

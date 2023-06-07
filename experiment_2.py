@@ -12,8 +12,8 @@ if __name__ == '__main__':
     n_traj = 100
     n_traj_training = 20
     n_steps = 500
-    pol_1 = 'avoid_o'
-    pol_2 = 'random'
+    pol_1 = 'random'
+    pol_2 = 'avoid_a'
     directory_1 = f'traj/{pol_1}'
     directory_2 = f'traj/{pol_2}'
     generate_new_traj = True  # Flag that decides whether new trajectories should be recorded

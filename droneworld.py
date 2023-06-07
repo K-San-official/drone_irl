@@ -1,5 +1,4 @@
 import random
-
 import numpy as np
 import utils as ut
 
@@ -59,6 +58,10 @@ class DroneWorld:
         self.update_state()
 
     def create_env_1(self):
+        """
+        Creates a pre-designed environment.
+        """
+        # Set borders at the edges
         self.place_borders()
 
         # Set drone start
@@ -82,6 +85,10 @@ class DroneWorld:
         self.people.append((430, 460))
 
     def create_env_2(self):
+        """
+        Creates a pre-designed environment.
+        """
+        # Set borders at the edges
         self.place_borders()
 
         # Set drone start
@@ -120,7 +127,6 @@ class DroneWorld:
         """
         Creates a random environment with a certain number of obstacles and people.
         The size of the obstacles varies.
-        :return:
         """
         # Place people into the world (randomly)
         for i in range(self.n_people):
@@ -137,6 +143,7 @@ class DroneWorld:
 
         # Set random starting position
         self.starting_pos = self.get_random_location()
+
         # Repeat if starting location is inside an obstacle
         while self.is_in_obstacle(self.starting_pos):
             self.starting_pos = self.get_random_location()
@@ -145,7 +152,6 @@ class DroneWorld:
     def place_borders(self):
         """
         Places borders at the edges of the environment so that the drone cannot leave the field.
-        :return:
         """
         bt = 5  # Border thickness
         self.obst.append((0, 0, self.size, bt))  # Top wall
@@ -156,7 +162,7 @@ class DroneWorld:
     def get_random_location(self) -> (float, float):
         """
         Generates a new random location in the field (x, y)
-        :return: tuple (x, y)
+        :return: location as a tuple (x, y)
         """
         x_r = np.random.rand() * (self.size - (self.dr_rad * 2)) + self.dr_rad
         y_r = np.random.rand() * (self.size - (self.dr_rad * 2)) + self.dr_rad
@@ -165,10 +171,8 @@ class DroneWorld:
     def move_drone_by_action(self, action: str):
         """
         Performs one action in the drone world and moves the drone according to the action
-        :param action:
-        :return:
+        :param action: character in the set {'w', 'a', 's', 'd'}
         """
-        step = 0
         if action == 'w':
             step = self.forward_step
         elif action == 's':
@@ -186,9 +190,11 @@ class DroneWorld:
         else:
             return
         (x, y) = self.current_pos
+
         # Apply rotation matrix
         x += (np.cos(self.current_angle * np.pi / 180) * step)
         y += (np.sin(self.current_angle * np.pi / 180) * step)
+
         # Check if drone is still in the bounds of the field
         if self.dr_rad <= x <= self.size - self.dr_rad and self.dr_rad <= y <= self.size - self.dr_rad:
             # Check if new position is not inside obstacles
@@ -198,9 +204,11 @@ class DroneWorld:
                 angle_randomness = (random.random() * 40) - 20
                 self.current_angle = (self.current_angle + 180 + angle_randomness) % 360
         self.update_state()
-        # print("Drone Postion: {}, \t Angle: {}".format(self.current_pos, self.current_angle))
 
     def get_min_person_dist(self) -> float:
+        """
+        :return: euclidean distance between the drone and the center of the closest person
+        """
         min_dist = -1
         for p in self.people:
             dist = np.linalg.norm(np.array(p) - np.array(self.current_pos))
@@ -209,6 +217,9 @@ class DroneWorld:
         return min_dist
 
     def get_min_obst_dist(self) -> float:
+        """
+        :return: euclidean distance between the drone and the closest obstacle
+        """
         min_dist = -1
         for o in self.obst:
             dx = max(o[0] - self.current_pos[0], self.current_pos[0] - o[2], 0)
@@ -219,6 +230,9 @@ class DroneWorld:
         return min_dist
 
     def update_people_sensors(self):
+        """
+        Updates the sensor readings for sensors that detect people.
+        """
         for i in range(len(self.people_sensors)):
             angle_offset = (i - (self.n_sensors // 2)) * self.sensor_spread
             x1 = self.current_pos[0] + (np.cos((self.current_angle + angle_offset) * np.pi / 180) * self.sensor_length)
@@ -248,6 +262,9 @@ class DroneWorld:
             self.people_sensors[i] = (x1, y1)
 
     def update_obst_sensors(self):
+        """
+        Updates the sensor readings for sensors that detect obstacles.
+        """
         for i in range(len(self.obst_sensors)):
             angle_offset = (i - (self.n_sensors // 2)) * self.sensor_spread
             x1 = self.current_pos[0] + (np.cos((self.current_angle + angle_offset) * np.pi / 180) * self.sensor_length)
@@ -274,6 +291,9 @@ class DroneWorld:
             self.obst_sensors[i] = (x1, y1)
 
     def update_state(self):  # Gets the features out of the simulation
+        """
+        Updates the current state (all state features) of the simulation.
+        """
         # Update obstacle sensors
         self.update_obst_sensors()
         # Update people sensors
@@ -287,6 +307,7 @@ class DroneWorld:
         """
         Checks if a position is inside an obstacle.
         The drone radius is added as a margin.
+        :return: True, if the drone is inside an obstacle.
         """
         in_obst = False
         for o in self.obst:
@@ -298,9 +319,8 @@ class DroneWorld:
     def execute_policy(self, pol_type, steps):
         """
         Executes a policy in the drone world for a number of steps without a GUI
-        :param pol_type:
-        :param steps:
-        :return:
+        :param pol_type: type of expert policy
+        :param steps: number of steps to execute
         """
         tj = TrajectoryLogger()
         pol = Policy(pol_type)
@@ -316,6 +336,13 @@ class DroneWorld:
             self.move_drone_by_action(a)
 
     def execute_policy_get_traj(self, pol_type, steps):
+        """
+        Executes a policy in the drone world for a number of steps without a GUI.
+        A trajectory is not saved to a file but directly returned as a list.
+        :param pol_type: type of expert policy
+        :param steps: number of steps to execute
+        :return: trajectory
+        """
         pol = Policy(pol_type)
         self.current_pos = self.starting_pos
         self.current_angle = 90
