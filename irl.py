@@ -275,7 +275,7 @@ if __name__ == '__main__':
     n_steps = 500  # Number of steps performed for each trajectory
     pol_type = 'avoid_o'
     directory = f'traj/{pol_type}'
-    generate_new_traj = False
+    generate_new_traj = True
 
     # --- Step 2: Create expert trajectories ---
 
@@ -304,7 +304,7 @@ if __name__ == '__main__':
         traj_list.append(traj)
 
     # --- Step 3: Execute IRL ---
-    w_list, mu_list = execute_irl(10, n_steps, 0.99, dw, traj_list)
+    w_list, mu_list = execute_irl(50, n_steps, 0.99, dw, traj_list)
 
     # --- Step 4: Plot Results ---
     plot_weights(w_list)
