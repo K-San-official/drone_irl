@@ -222,11 +222,13 @@ def plot_weights(w_list):
     for i in range(16):
         if i < 7:
             plt.plot(x, np.array(w_list)[:, i], label=f'Weight {i}', linestyle='dotted')
-        elif i >= 7 < 14:
+        elif 7 >= i < 14:
             plt.plot(x, np.array(w_list)[:, i], label=f'Weight {i}', linestyle='dashed')
         else:
             plt.plot(x, np.array(w_list)[:, i], label=f'Weight {i}', linestyle='solid')
     #plt.title("Weights over IRL process")
+    plt.xlabel('Iteration')
+    plt.ylabel('Reward Weight Value')
     plt.legend()
     plt.show()
 
@@ -241,11 +243,13 @@ def plot_fe(mu_list):
     for i in range(16):
         if i < 7:
             plt.plot(x, np.array(mu_list)[:, i], label=f'FE {i}', linestyle='dotted')
-        elif i >= 7 < 14:
+        elif 7 >= i < 14:
             plt.plot(x, np.array(mu_list)[:, i], label=f'FE {i}', linestyle='dashed')
         else:
             plt.plot(x, np.array(mu_list)[:, i], label=f'FE {i}', linestyle='solid')
     #plt.title("FEs over IRL process")
+    plt.xlabel('Iteration')
+    plt.ylabel('Feature Expectation Value')
     plt.legend()
     plt.show()
 
