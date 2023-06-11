@@ -9,8 +9,8 @@ training_policies = [
     'random'
 ]
 n_traj = 20
-n_steps = 500
-irl_iterations = 5
+n_steps = 200
+irl_iterations = 40
 show_log = True
 generate_new_traj = True
 
@@ -50,7 +50,7 @@ if __name__ == '__main__':
 
         w_list, mu_list = execute_irl(irl_iterations, n_steps, 0.99, dw, traj_list)
 
-        result_dir = f'results2/{pol_type}'
+        result_dir = f'results2/ex_1/{pol_type}'
         if os.path.exists(result_dir):
             utils.clear_folder(result_dir)
         else:
@@ -65,7 +65,8 @@ if __name__ == '__main__':
 
         # Saves weights to file
         with open(f'{result_dir}/weights.txt', 'w') as f:
-            f.writelines(w)
+            for line in w:
+                f.write(f'{str(line)}\n')
 
         score_e = calculate_score(traj_list[0], w)  # First expert trajectory
 
@@ -73,7 +74,7 @@ if __name__ == '__main__':
         traj_r = dw.execute_policy_get_traj('random', n_steps)
         score_r = calculate_score(traj_r, w)
 
-        with open(f'{result_dir}/score_comparison.txt') as f:
+        with open(f'{result_dir}/score_comparison.txt', 'w') as f:
             f.write(f'{pol_type} Score: {score_e}\n')
             f.write(f'random Score: {score_r}\n')
 
