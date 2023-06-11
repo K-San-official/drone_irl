@@ -158,7 +158,7 @@ def svm_tune(w, mu_e, mu_list):
     return clf.coef_
 
 
-def execute_irl(iterations: int, n_steps, gamma: float, dw: DroneWorld, traj_list: list):
+def execute_irl(iterations: int, n_steps, gamma: float, dw: DroneWorld, traj_list: list, create_heatmap=False):
     """
 
     :param iterations:
@@ -198,7 +198,7 @@ def execute_irl(iterations: int, n_steps, gamma: float, dw: DroneWorld, traj_lis
         new_policy_nn = q_learning(n_steps, dw, w)
 
         # --- Step 3: Compute new feature expectations from policy ---
-        mu_new = feature_expectation_nn(new_policy_nn, dw, gamma, n_steps, create_heatmap=True)
+        mu_new = feature_expectation_nn(new_policy_nn, dw, gamma, n_steps, create_heatmap=create_heatmap)
         mu_list.append(mu_new)
         if print_results:
             print(f'Iteration {i} feature expectations: {mu_new}')

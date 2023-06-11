@@ -5,7 +5,7 @@ from droneworld import DroneWorld
 pol_comb = [
     ['avoid_o', 'random'],
     ['avoid_p', 'random'],
-    ['avoid:a', 'random'],
+    ['avoid_a', 'random'],
     ['random', 'avoid_o'],
     ['random', 'avoid_p'],
     ['random', 'avoid_a'],
@@ -18,10 +18,10 @@ pol_comb = [
 ]
 
 generate_new_traj = True  # Flag that decides whether new trajectories should be recorded
-irl_iterations = 2
+irl_iterations = 80
 n_traj = 100
 n_traj_training = 20
-n_steps = 200
+n_steps = 500
 gamma = 0.99
 
 if __name__ == '__main__':
