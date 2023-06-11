@@ -221,11 +221,11 @@ def plot_weights(w_list, directory, pol_type):
     y = np.sin(x)
     for i in range(16):
         if i < 7:
-            plt.plot(x, np.array(w_list)[:, i], label=f'Weight {i}', linestyle='dotted')
+            plt.plot(x, np.array(w_list)[:, i], label=f'Weight {i + 1}', linestyle='dotted')
         elif 7 >= i < 14:
-            plt.plot(x, np.array(w_list)[:, i], label=f'Weight {i}', linestyle='dashed')
+            plt.plot(x, np.array(w_list)[:, i], label=f'Weight {i + 1}', linestyle='dashed')
         else:
-            plt.plot(x, np.array(w_list)[:, i], label=f'Weight {i}', linestyle='solid')
+            plt.plot(x, np.array(w_list)[:, i], label=f'Weight {i + 1}', linestyle='solid')
     plt.title(f'IRL Weights - {pol_type}')
     plt.xlabel('Iteration')
     plt.ylabel('Reward Weight Value')
@@ -242,11 +242,11 @@ def plot_fe(mu_list, directory, pol_type):
     x = np.arange(len(mu_list))
     for i in range(16):
         if i < 7:
-            plt.plot(x, np.array(mu_list)[:, i], label=f'FE {i}', linestyle='dotted')
+            plt.plot(x, np.array(mu_list)[:, i], label=f'FE {i + 1}', linestyle='dotted')
         elif 7 >= i < 14:
-            plt.plot(x, np.array(mu_list)[:, i], label=f'FE {i}', linestyle='dashed')
+            plt.plot(x, np.array(mu_list)[:, i], label=f'FE {i + 1}', linestyle='dashed')
         else:
-            plt.plot(x, np.array(mu_list)[:, i], label=f'FE {i}', linestyle='solid')
+            plt.plot(x, np.array(mu_list)[:, i], label=f'FE {i + 1}', linestyle='solid')
     plt.title(f'IRL Feature Expectations - {pol_type}')
     plt.xlabel('Iteration')
     plt.ylabel('Feature Expectation Value')

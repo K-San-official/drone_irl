@@ -21,7 +21,7 @@ class Heatmap:
         print(np.sum(self.grid))
 
     def create_heatmap(self):
-        plt.imshow(self.grid, cmap='hot', interpolation='nearest')
+        plt.imshow(self.grid.clip(0, 20), cmap='hot', interpolation='nearest')
         plt.xlabel('x-coordinate')
         plt.ylabel('y-coordinate')
         plt.show()

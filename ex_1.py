@@ -8,6 +8,7 @@ training_policies = [
     'avoid_a',
     'random'
 ]
+
 n_traj = 20
 n_steps = 200
 irl_iterations = 40
