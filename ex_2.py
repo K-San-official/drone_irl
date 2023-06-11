@@ -85,7 +85,7 @@ if __name__ == '__main__':
 
         print('---')
         print(f'Imported {len(traj_list_1)} trajectories using policy 1')
-        print(f'Imported {len(traj_list_2)} trajectories using policy 1')
+        print(f'Imported {len(traj_list_2)} trajectories using policy 2')
         print(f'Imported {len(traj_list_training)} training trajectories using policy 1')
         print('---')
 
