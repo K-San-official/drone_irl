@@ -92,9 +92,9 @@ class Policy:
                 right_sum += sf[i + 7]
         if left_sum > 1.5 and left_sum > right_sum:
             return 'd'
-        if max(sf[7:9]) > 0.8:
+        if max(sf[7:9]) > 0.7:
             return 'd'
-        if max(sf[11:13]) > 0.8:
+        if max(sf[11:13]) > 0.7:
             return 'a'
         if right_sum > 1.5:
             return 'a'

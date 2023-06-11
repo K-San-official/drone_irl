@@ -211,7 +211,7 @@ def execute_irl(iterations: int, n_steps, gamma: float, dw: DroneWorld, traj_lis
     return w_list, mu_list
 
 
-def plot_weights(w_list):
+def plot_weights(w_list, directory, pol_type):
     """
     Plots all reward weights during the IRL process
     :param w_list:
@@ -226,14 +226,14 @@ def plot_weights(w_list):
             plt.plot(x, np.array(w_list)[:, i], label=f'Weight {i}', linestyle='dashed')
         else:
             plt.plot(x, np.array(w_list)[:, i], label=f'Weight {i}', linestyle='solid')
-    #plt.title("Weights over IRL process")
+    plt.title(f'IRL Weights - {pol_type}')
     plt.xlabel('Iteration')
     plt.ylabel('Reward Weight Value')
     plt.legend()
-    plt.show()
+    plt.savefig(f'{directory}/ex_1_w_{pol_type}.png')
 
 
-def plot_fe(mu_list):
+def plot_fe(mu_list, directory, pol_type):
     """
     Plots all feature expectations during the IRL process
     :param mu_list:
@@ -247,11 +247,11 @@ def plot_fe(mu_list):
             plt.plot(x, np.array(mu_list)[:, i], label=f'FE {i}', linestyle='dashed')
         else:
             plt.plot(x, np.array(mu_list)[:, i], label=f'FE {i}', linestyle='solid')
-    #plt.title("FEs over IRL process")
+    plt.title(f'IRL Feature Expectations - {pol_type}')
     plt.xlabel('Iteration')
     plt.ylabel('Feature Expectation Value')
     plt.legend()
-    plt.show()
+    plt.savefig(f'{directory}/ex_1_fe_{pol_type}.png')
 
 
 def calculate_score(traj, w):

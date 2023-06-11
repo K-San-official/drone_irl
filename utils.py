@@ -1,5 +1,5 @@
 import random
-
+import os
 import numpy as np
 
 """
@@ -98,3 +98,9 @@ def get_random_action():
     else:
         return 'd'
 
+
+def clear_folder(directory):
+    if os.path.exists(directory):
+        filelist = [f for f in os.listdir(directory) if f.endswith(".csv")]
+        for f in filelist:
+            os.remove(os.path.join(directory, f))
