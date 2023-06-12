@@ -1,17 +1,19 @@
+import gc
+
 import utils
 from irl import *
 
 # Change the following parameters as preferred:
 training_policies = [
-    #'avoid_o',
-    #'avoid_p',
-    'avoid_a'#,
-    #'random'
+    'avoid_o',
+    'avoid_p',
+    'avoid_a',
+    'random'
 ]
 
 n_traj = 20
-n_steps = 500
-irl_iterations = 80
+n_steps = 250
+irl_iterations = 40
 show_log = True
 generate_new_traj = True
 
@@ -81,3 +83,8 @@ if __name__ == '__main__':
 
         print(f'Expert score: {score_e}')
         print(f'Random score: {score_r}')
+
+        # Clean up to save ram
+
+        del w_list, mu_list, traj_list
+        gc.collect()

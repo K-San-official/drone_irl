@@ -17,10 +17,10 @@ pol_comb = [
     ['avoid_a', 'avoid_o']
 ]
 
-irl_iterations = 80
+irl_iterations = 40
 n_traj = 100
 n_traj_training = 20
-n_steps = 500
+n_steps = 250
 gamma = 0.99
 show_log = True
 generate_new_traj = True  # Flag that decides whether new trajectories should be recorded

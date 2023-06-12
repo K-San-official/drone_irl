@@ -147,7 +147,7 @@ def q_learning(episodes: int, dw: DroneWorld, w):
     return nn
 
 
-def svm_tune(w, mu_e, mu_list):
+def svm_tune(mu_e, mu_list):
     # x are the training samples where the first sample is the expert feature expectation
     x = [mu_e] + mu_list
     # y are the classification labels so the expert class is 1 and everything else is classified as -1
@@ -189,7 +189,7 @@ def execute_irl(iterations: int, n_steps, gamma: float, dw: DroneWorld, traj_lis
                 w[j] = random.random() * 0.2 - 0.1  # Interval [-1, 1]
         else:
             # Tune w using as SVM maximum margin method
-            w = svm_tune(w, mu_e, mu_list)[0]
+            w = svm_tune(mu_e, mu_list)[0]
         w_list.append(w)
         if print_results:
             print(f'Iteration {i} reward weights: {w}')
@@ -221,7 +221,7 @@ def plot_weights(w_list, directory, pol_type):
     for i in range(16):
         if i < 7:
             plt.plot(x, np.array(w_list)[:, i], label=f'Weight {i + 1}', linestyle='dotted')
-        elif 7 >= i < 14:
+        elif i < 14:
             plt.plot(x, np.array(w_list)[:, i], label=f'Weight {i + 1}', linestyle='dashed')
         else:
             plt.plot(x, np.array(w_list)[:, i], label=f'Weight {i + 1}', linestyle='solid')
@@ -244,7 +244,7 @@ def plot_fe(mu_list, directory, pol_type):
     for i in range(16):
         if i < 7:
             plt.plot(x, np.array(mu_list)[:, i], label=f'FE {i + 1}', linestyle='dotted')
-        elif 7 >= i < 14:
+        elif i < 14:
             plt.plot(x, np.array(mu_list)[:, i], label=f'FE {i + 1}', linestyle='dashed')
         else:
             plt.plot(x, np.array(mu_list)[:, i], label=f'FE {i + 1}', linestyle='solid')
