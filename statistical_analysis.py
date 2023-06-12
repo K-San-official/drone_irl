@@ -1,9 +1,10 @@
-import scipy.stats as stats
+from statsmodels.stats.weightstats import ztest as ztest
 import numpy as np
 
 if __name__ == '__main__':
-    sample_1_path = 'results/experiment_2/scores_pol_1.txt'
-    sample_2_path = 'results/experiment_2/scores_pol_2.txt'
+    score_dir = 'results2/ex_2/random_x_avoid_p/'
+    sample_1_path = score_dir + 'scores_pol_1.txt'
+    sample_2_path = score_dir + 'scores_pol_2.txt'
     sample_size = 100
 
     sample_1 = []
@@ -24,6 +25,6 @@ if __name__ == '__main__':
     print('---')
     print(f'Sample 1 -> Mean: {round(np.mean(arr_1), 4)}, Var: {round(np.var(arr_1), 4)}')
     print(f'Sample 2 -> Mean: {round(np.mean(arr_2), 4)}, Var: {round(np.var(arr_2), 4)}')
-    print(stats.ttest_ind(a=arr_1, b=arr_2, equal_var=False))
+    print(ztest(arr_1, arr_2))
 
 
