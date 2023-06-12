@@ -17,16 +17,23 @@ pol_comb = [
     ['avoid_a', 'avoid_o']
 ]
 
-generate_new_traj = True  # Flag that decides whether new trajectories should be recorded
 irl_iterations = 80
 n_traj = 100
 n_traj_training = 20
 n_steps = 500
 gamma = 0.99
+show_log = True
+generate_new_traj = True  # Flag that decides whether new trajectories should be recorded
+
 
 if __name__ == '__main__':
     # Iterate over all combinations of policies to generate results
     for comb in pol_comb:
+
+        if show_log:
+            print('-------------------------------')
+            print(f'Start of {comb[0]} vs {comb[1]}')
+            print('-------------------------------')
         dw = DroneWorld(500, 0, 0, 2)
         pol_1 = comb[0]
         pol_2 = comb[1]

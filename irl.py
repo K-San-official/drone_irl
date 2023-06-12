@@ -218,7 +218,6 @@ def plot_weights(w_list, directory, pol_type):
     :return:
     """
     x = np.arange(len(w_list))
-    y = np.sin(x)
     for i in range(16):
         if i < 7:
             plt.plot(x, np.array(w_list)[:, i], label=f'Weight {i + 1}', linestyle='dotted')
@@ -231,6 +230,8 @@ def plot_weights(w_list, directory, pol_type):
     plt.ylabel('Reward Weight Value')
     plt.legend()
     plt.savefig(f'{directory}/ex_1_w_{pol_type}.png')
+    plt.clf()
+    plt.cla()
 
 
 def plot_fe(mu_list, directory, pol_type):
@@ -252,6 +253,8 @@ def plot_fe(mu_list, directory, pol_type):
     plt.ylabel('Feature Expectation Value')
     plt.legend()
     plt.savefig(f'{directory}/ex_1_fe_{pol_type}.png')
+    plt.clf()
+    plt.cla()
 
 
 def calculate_score(traj, w):
@@ -276,7 +279,7 @@ if __name__ == '__main__':
 
     dw = DroneWorld(500, 0, 0, 2)
     n_traj = 20  # Number of trajectories that are created by the expert policies
-    n_steps = 500  # Number of steps performed for each trajectory
+    n_steps = 200  # Number of steps performed for each trajectory
     pol_type = 'avoid_o'
     directory = f'traj/{pol_type}'
     generate_new_traj = True
@@ -308,19 +311,17 @@ if __name__ == '__main__':
         traj_list.append(traj)
 
     # --- Step 3: Execute IRL ---
-    w_list, mu_list = execute_irl(50, n_steps, 0.99, dw, traj_list)
+    w_list, mu_list = execute_irl(3, n_steps, 0.99, dw, traj_list)
 
     # --- Step 4: Plot Results ---
-    plot_weights(w_list)
-    plot_fe(mu_list)
+    plot_weights(w_list, 'results', pol_type)
+    plot_fe(mu_list, 'results', pol_type)
 
     # --- Step 5: Gather Scores ---
     w = w_list[-1]
 
     print('w:')
     print(w)
-    print('Traj 0:')
-    print(traj_list[0])
     score_e = calculate_score(traj_list[0], w)  # First expert trajectory
 
     # Generate random trajectory
