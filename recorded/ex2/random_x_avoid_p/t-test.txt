@@ -1,3 +1,0 @@
-Sample 1 -> Mean: 0.0868, Var: 0.0014
-Sample 2 -> Mean: 0.1173, Var: 0.0007
-Ttest_indResult(statistic=-6.689122705307015, pvalue=2.8205757252663583e-10)
