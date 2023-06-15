@@ -9,12 +9,12 @@ pol_comb = [
     #['random', 'avoid_o'],
     #['random', 'avoid_p'],
     #['random', 'avoid_a'],
-    ['avoid_o', 'avoid_p'],
-    ['avoid_o', 'avoid_a'],
-    ['avoid_p', 'avoid_o']#,
-    #['avoid_p', 'avoid_a'],
-    #['avoid_a', 'avoid_p'],
-    #['avoid_a', 'avoid_o']
+    #['avoid_o', 'avoid_p'],
+    #['avoid_o', 'avoid_a'],
+    #['avoid_p', 'avoid_o'],
+    ['avoid_p', 'avoid_a'],
+    ['avoid_a', 'avoid_p'],
+    ['avoid_a', 'avoid_o']
 ]
 
 irl_iterations = 40

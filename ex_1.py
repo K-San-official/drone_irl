@@ -84,7 +84,13 @@ if __name__ == '__main__':
         print(f'Expert score: {score_e}')
         print(f'Random score: {score_r}')
 
-        # Clean up to save ram
+        # Save weights to file
+        reward_weights_file = f'reward_weights/weights_{pol_type}.txt'
+        with open(reward_weights_file, 'a') as f:
+            for weight in w:
+                f.write(f'{weight} ')
+            f.write('\n')
 
+        # Clean up to save ram
         del w_list, mu_list, traj_list
         gc.collect()
