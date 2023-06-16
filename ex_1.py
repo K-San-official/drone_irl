@@ -12,8 +12,8 @@ training_policies = [
 ]
 
 n_traj = 20
-n_steps = 250
-irl_iterations = 40
+n_steps = 200
+irl_iterations = 80
 show_log = True
 generate_new_traj = True
 
@@ -51,7 +51,7 @@ if __name__ == '__main__':
 
         # --- Step 3: Execute IRL ---
 
-        w_list, mu_list = execute_irl(irl_iterations, n_steps, 0.99, dw, traj_list)
+        w_list, mu_list = execute_irl(irl_iterations, n_steps, 0.99, dw, traj_list, create_heatmap=True)
 
         result_dir = f'results2/ex_1/{pol_type}'
         if os.path.exists(result_dir):

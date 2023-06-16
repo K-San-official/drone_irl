@@ -94,15 +94,16 @@ def q_learning(episodes: int, dw: DroneWorld, w):
 
     # Define variables
     gamma = 0.99
-    epsilon = 0.3
-    alpha = 0.2
+    epsilon = 0.5
+    edf = 0.98  # Epsilon Decay Factor
+    #alpha = 0.1
 
     # Create Neural network
     nn = Sequential()
     nn.add(Dense(16, activation='relu'))
-    nn.add(Dense(32, activation='relu'))
-    nn.add(Dense(32, activation='relu'))
-    nn.add(Dense(4, activation='linear'))
+    nn.add(Dense(64, activation='relu'))
+    nn.add(Dense(64, activation='relu'))
+    nn.add(Dense(4, activation='softmax'))
     nn.compile(loss='mse', optimizer='adam', metrics=['mae'])
 
     # Reset starting position
@@ -134,15 +135,17 @@ def q_learning(episodes: int, dw: DroneWorld, w):
         sf_old = dw.state_features
         q_old = q_values_old[action]
         # Calculate new reward
-        reward = sum(np.multiply(dw.state_features, w))
+        reward = sum(np.multiply(sf_old, w))
         # Update environment by one step
         dw.move_drone_by_action(a)
         max_next_state = max(nn.predict(np.expand_dims(dw.state_features, axis=0), verbose=None)[0])
-        target = q_old + alpha * (reward + (gamma * max_next_state) - q_old)
+        # target = q_old + alpha * (reward + (gamma * max_next_state) - q_old)
+        target = reward + (gamma * max_next_state) - q_old
         # Update Q(s' ,a') with new target value
         q_values_old[action] = target
         # Backpropagation of weights inside the Neural Network
-        nn.fit(np.expand_dims(sf_old, axis=0), np.expand_dims(q_values_old, axis=0), epochs=1, verbose=None)
+        nn.fit(np.expand_dims(sf_old, axis=0), np.expand_dims(q_values_old, axis=0), epochs=1)
+        epsilon *= edf
     print(f'Action Count (w, a, s, d): {action_count}')
     return nn
 
