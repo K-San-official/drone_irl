@@ -5,15 +5,15 @@ from irl import *
 
 # Change the following parameters as preferred:
 training_policies = [
-    'avoid_o'#,
-    #'avoid_p',
-    #'avoid_a',
-    #'random'
+    'avoid_o',
+    'avoid_p',
+    'avoid_a',
+    'random'
 ]
 
 n_traj = 20
-n_steps = 200
-irl_iterations = 80
+n_steps = 250
+irl_iterations = 100
 show_log = True
 generate_new_traj = True
 

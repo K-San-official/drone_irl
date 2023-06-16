@@ -103,7 +103,7 @@ def q_learning(episodes: int, dw: DroneWorld, w):
     nn.add(Dense(16, activation='relu'))
     nn.add(Dense(64, activation='relu'))
     nn.add(Dense(64, activation='relu'))
-    nn.add(Dense(4, activation='softmax'))
+    nn.add(Dense(4, activation='linear'))
     nn.compile(loss='mse', optimizer='adam', metrics=['mae'])
 
     # Reset starting position
@@ -144,7 +144,7 @@ def q_learning(episodes: int, dw: DroneWorld, w):
         # Update Q(s' ,a') with new target value
         q_values_old[action] = target
         # Backpropagation of weights inside the Neural Network
-        nn.fit(np.expand_dims(sf_old, axis=0), np.expand_dims(q_values_old, axis=0), epochs=1)
+        nn.fit(np.expand_dims(sf_old, axis=0), np.expand_dims(q_values_old, axis=0), epochs=1, verbose=None)
         epsilon *= edf
     print(f'Action Count (w, a, s, d): {action_count}')
     return nn
