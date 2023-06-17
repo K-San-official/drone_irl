@@ -13,7 +13,7 @@ training_policies = [
 
 n_traj = 20
 n_steps = 250
-irl_iterations = 100
+irl_iterations = 50
 show_log = True
 generate_new_traj = True
 

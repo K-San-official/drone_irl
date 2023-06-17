@@ -96,7 +96,7 @@ def q_learning(episodes: int, dw: DroneWorld, w):
     gamma = 0.99
     epsilon = 0.5
     edf = 0.98  # Epsilon Decay Factor
-    #alpha = 0.1
+    alpha = 0.5
 
     # Create Neural network
     nn = Sequential()
@@ -139,8 +139,8 @@ def q_learning(episodes: int, dw: DroneWorld, w):
         # Update environment by one step
         dw.move_drone_by_action(a)
         max_next_state = max(nn.predict(np.expand_dims(dw.state_features, axis=0), verbose=None)[0])
-        # target = q_old + alpha * (reward + (gamma * max_next_state) - q_old)
-        target = reward + (gamma * max_next_state) - q_old
+        target = q_old + alpha * (reward + (gamma * max_next_state) - q_old)
+        # target = reward + (gamma * max_next_state) - q_old
         # Update Q(s' ,a') with new target value
         q_values_old[action] = target
         # Backpropagation of weights inside the Neural Network
