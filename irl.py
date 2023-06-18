@@ -220,18 +220,22 @@ def plot_weights(w_list, directory, pol_type):
     :param w_list:
     :return:
     """
+    plt.figure(figsize=(10, 6))
+    ax = plt.subplot(111)
     x = np.arange(len(w_list))
     for i in range(16):
         if i < 7:
-            plt.plot(x, np.array(w_list)[:, i], label=f'Weight {i + 1}', linestyle='dotted')
+            ax.plot(x, np.array(w_list)[:, i], label=f'Weight {i + 1}', linestyle='dotted')
         elif i < 14:
-            plt.plot(x, np.array(w_list)[:, i], label=f'Weight {i + 1}', linestyle='dashed')
+            ax.plot(x, np.array(w_list)[:, i], label=f'Weight {i + 1}', linestyle='dashed')
         else:
-            plt.plot(x, np.array(w_list)[:, i], label=f'Weight {i + 1}', linestyle='solid')
-    plt.title(f'IRL Weights - {pol_type}')
-    plt.xlabel('Iteration')
-    plt.ylabel('Reward Weight Value')
-    plt.legend()
+            ax.plot(x, np.array(w_list)[:, i], label=f'Weight {i + 1}', linestyle='solid')
+
+    #fig.title(f'IRL Weights - {pol_type}')
+    plt.tight_layout(rect=[0.05, 0.05, 0.85, 1])
+    plt.xlabel('Iteration', fontsize=20)
+    plt.ylabel('Reward Weight Value', fontsize=20)
+    ax.legend(bbox_to_anchor=(1.04, 1), loc='upper left')
     plt.savefig(f'{directory}/ex_1_w_{pol_type}.png')
     plt.clf()
     plt.cla()
@@ -243,18 +247,21 @@ def plot_fe(mu_list, directory, pol_type):
     :param mu_list:
     :return:
     """
+    plt.figure(figsize=(10, 6))
+    ax = plt.subplot(111)
     x = np.arange(len(mu_list))
     for i in range(16):
         if i < 7:
-            plt.plot(x, np.array(mu_list)[:, i], label=f'FE {i + 1}', linestyle='dotted')
+            plt.plot(x, np.array(mu_list)[:, i], label=f'Feature {i + 1}', linestyle='dotted')
         elif i < 14:
-            plt.plot(x, np.array(mu_list)[:, i], label=f'FE {i + 1}', linestyle='dashed')
+            plt.plot(x, np.array(mu_list)[:, i], label=f'Feature {i + 1}', linestyle='dashed')
         else:
-            plt.plot(x, np.array(mu_list)[:, i], label=f'FE {i + 1}', linestyle='solid')
-    plt.title(f'IRL Feature Expectations - {pol_type}')
-    plt.xlabel('Iteration')
-    plt.ylabel('Feature Expectation Value')
-    plt.legend()
+            plt.plot(x, np.array(mu_list)[:, i], label=f'Feature {i + 1}', linestyle='solid')
+    #plt.title(f'IRL Feature Expectations - {pol_type}')
+    plt.tight_layout(rect=[0.05, 0.05, 0.85, 1])
+    plt.xlabel('Iteration', fontsize=20)
+    plt.ylabel('Feature Expectation Value', fontsize=20)
+    ax.legend(bbox_to_anchor=(1.04, 1), loc='upper left')
     plt.savefig(f'{directory}/ex_1_fe_{pol_type}.png')
     plt.clf()
     plt.cla()
