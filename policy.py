@@ -65,14 +65,12 @@ class Policy:
             return 's'
         if left_sum > 0.7 and left_sum > right_sum:
             return 'd'
-        if max(sf[0:2]) > 0.7:
-            return 'd'
-        if max(sf[4:6]) > 0.7:
-            return 'a'
         if right_sum > 0.7:
             return 'a'
         if total_sum > 3.5:
             return 's'
+        if sf[15] > 0.97:
+            return 'a'
         else:
             return 'w'
 

@@ -65,7 +65,7 @@ class DroneWorld:
         self.place_borders()
 
         # Set drone start
-        self.starting_pos = (50, 50)
+        self.starting_pos = (250, 250)
         self.current_pos = self.starting_pos
         self.current_angle = 90
 
@@ -73,7 +73,7 @@ class DroneWorld:
         self.obst.append((100, 0, 150, 200))
         self.obst.append((0, 350, 100, 400))
         self.obst.append((320, 300, 380, 350))
-        self.obst.append((290, 180, 390, 200))
+        self.obst.append((290, 150, 390, 230))
         self.obst.append((400, 0, 500, 50))
 
         # Place people in the world
@@ -83,6 +83,19 @@ class DroneWorld:
         self.people.append((284, 332))
         self.people.append((130, 350))
         self.people.append((430, 460))
+
+        self.people.append((325, 265))
+        self.people.append((220, 59))
+        self.people.append((410, 452))
+        self.people.append((440, 174))
+        self.people.append((465, 210))
+        self.people.append((261, 158))
+        self.people.append((380, 130))
+        self.people.append((120, 280))
+        self.people.append((180, 170))
+        self.people.append((214, 101))
+        self.people.append((240, 89))
+        self.people.append((52, 420))
 
     def create_env_2(self):
         """
