@@ -5,26 +5,26 @@ from droneworld import DroneWorld
 pol_comb = [
     #['avoid_o', 'random'],
     #['avoid_p', 'random'],
-    #['avoid_a', 'random'],
+    ['avoid_a', 'random'],
     #['random', 'avoid_o'],
     #['random', 'avoid_p'],
-    #['random', 'avoid_a'],
+    ['random', 'avoid_a']#,
     #['avoid_o', 'avoid_p'],
     #['avoid_o', 'avoid_a'],
     #['avoid_p', 'avoid_o'],
-    ['avoid_p', 'avoid_a'],
-    ['avoid_a', 'avoid_p'],
-    ['avoid_a', 'avoid_o']
+    #['avoid_p', 'avoid_a'],
+    #['avoid_a', 'avoid_p'],
+    #['avoid_a', 'avoid_o']
 ]
 
-irl_iterations = 40
+irl_iterations = 50
 n_traj = 100
 n_traj_training = 20
 n_steps = 250
 gamma = 0.99
 show_log = True
 generate_new_traj = True  # Flag that decides whether new trajectories should be recorded
-dw_test = DroneWorld(500, 18, 5, 0)
+dw_test = DroneWorld(500, 0, 0, 1)
 dw_train = DroneWorld(500, 0, 0, 2)
 
 

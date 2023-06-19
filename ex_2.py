@@ -3,11 +3,11 @@ import utils
 from droneworld import DroneWorld
 
 pol_comb = [
-    ['avoid_o', 'random'],
-    #['avoid_p', 'random'],
+    #['avoid_o', 'random'],
+    ['avoid_p', 'random'],
     #['avoid_a', 'random'],
-    ['random', 'avoid_o']#,
-    #['random', 'avoid_p'],
+    #['random', 'avoid_o'],
+    ['random', 'avoid_p']#,
     #['random', 'avoid_a'],
     #['avoid_o', 'avoid_p'],
     #['avoid_o', 'avoid_a'],
