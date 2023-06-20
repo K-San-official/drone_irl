@@ -2,7 +2,7 @@ from statsmodels.stats.weightstats import ztest as ztest
 import numpy as np
 
 if __name__ == '__main__':
-    score_dir = 'results2/ex_2/avoid_a_x_random/'
+    score_dir = 'results2/ex_3/random_x_avoid_a/'
     sample_1_path = score_dir + 'scores_pol_1.txt'
     sample_2_path = score_dir + 'scores_pol_2.txt'
     sample_size = 100
