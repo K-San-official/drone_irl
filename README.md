@@ -10,18 +10,57 @@ Since: 01.04.2023
 
 ---
 
-## Disclaimer: This project is work in progress. ##
+## Dependencies ##
 
-With Inverse Reinforcement Learning (IRL), expert behaviour forms
-policies that can be translated into reward functions that are
-initially unknown. The goal is to evaluate drone piloting based on
-expert data and to be able to understand the underlying decision-making.
+The following packages need to be installed for this application:
+
+- Numpy
+- TensorFlow
+- Matplotlib
+- Sklearn
+- Tkinter
+- Scipy
 
 ---
 
-## Getting Started: ##
+## Getting Started ##
 
-Navigate to the file 'simulation2d.py' and execute the main function
+Navigate to the file 'simulation2d.py' and execute the main function to execute a GUI that allows
+a user to navigate the drone with the keys [W, A, S, D].
+
+---
+
+## Experiments ##
+
+There are 4 experiments in total that are stated as follows:
+
+1) How does the generated reward function change
+throughout the IRL iterations? It is hypothesised that
+reward weights are stabilising over a large number of
+iterations during the IRL process.
+2) Is it possible to identify whether a trajectory follows
+a certain policy by creating a score with a trained
+reward function? It is hypothesised that the score
+of trajectories following the expert policy that is used
+for learning is significantly higher than the score of
+trajectories following other policies.
+3) How well-suited are the reward functions for un-
+known environments? The hypothesis is similar to the
+one from research question 2 with the only difference
+that trajectories used to calculate scores originate from
+a different environment than the ones used for learning.
+4) What information can be extracted from the weights
+of a reward function? It is hypothesised that the reward
+weights corresponding to sensing people will be close
+to zero for an expert policy that only avoids obstacles
+but disregards people.
+
+In order to obtain results, the files ex_1.py, ex_2.py and ex_3.py can be executed.
+The fourth experiment relies on the prior execution of ex_1. By executing barplot_generater.py,
+results for the fourth experiment will be created.
+
+The file statistical_analysis.py provides a tool to calculate the statistical significance
+for both experiment 2 and 3.
 
 ---
 
