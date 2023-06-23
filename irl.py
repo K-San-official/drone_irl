@@ -11,8 +11,16 @@ import matplotlib.pyplot as plt
 import heatmap_generator
 from droneworld import DroneWorld
 
+"""
+This file embodies the backend of what is happening during an IRL process.
+"""
 
 def policy_difference(w, mu_e, mu_i):
+    """
+    Computes the difference of reward weights * feature expectations
+    between an expert policy and an intermediate policy.
+    :return: euclidean distance
+    """
     v_e = np.inner(np.array(w), np.array(mu_e))
     v_i = np.inner(np.array(w), np.array(mu_i))
     return abs(v_e - v_i)
@@ -87,7 +95,6 @@ def q_learning(episodes: int, dw: DroneWorld, w):
     Reference: https://www.baeldung.com/cs/reinforcement-learning-neural-network
     Executes the famous Q-Learning algorithm to find a policy that matches the reward-function best
     :param episodes:
-    :param env:
     :param w:
     :return: The generated neural network itself so that it can be used for state-action mapping S -> A
     """

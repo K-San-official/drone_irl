@@ -3,14 +3,15 @@ import gc
 import utils
 from irl import *
 
-# Change the following parameters as preferred:
+# List of policies that are used to learn a reward function.
 training_policies = [
-    'avoid_o'#,
-    #'avoid_p',
-    #'avoid_a',
-    #'random'
+    'avoid_o',
+    'avoid_p',
+    'avoid_a',
+    'random'
 ]
 
+# Change the following variables as desired
 n_traj = 20
 n_steps = 250
 irl_iterations = 50
@@ -18,17 +19,14 @@ show_log = True
 generate_new_traj = True
 
 if __name__ == '__main__':
-
     # Iterate over each trajectory and perform an individual IRL routine for each one.
     for pol_type in training_policies:
 
         # --- Step 1: Create environment ---
-
         dw = DroneWorld(500, 0, 0, 2)
         traj_dir = f'traj/{pol_type}'
 
         # --- Step 2: Create expert trajectories ---
-
         if generate_new_traj:
             # Clear old files in folder
             utils.clear_folder(traj_dir)
@@ -50,7 +48,6 @@ if __name__ == '__main__':
             traj_list.append(traj)
 
         # --- Step 3: Execute IRL ---
-
         w_list, mu_list = execute_irl(irl_iterations, n_steps, 0.99, dw, traj_list, create_heatmap=True)
 
         result_dir = f'results2/ex_1/{pol_type}'

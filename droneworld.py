@@ -1,4 +1,3 @@
-import random
 import numpy as np
 import utils as ut
 
@@ -213,9 +212,6 @@ class DroneWorld:
             # Check if new position is not inside obstacles
             if not self.is_in_obstacle((x, y)):
                 self.current_pos = (x, y)
-            #else:
-            #    angle_randomness = (random.random() * 40) - 20
-            #    self.current_angle = (self.current_angle + 180 + angle_randomness) % 360
         self.update_state()
 
     def get_min_person_dist(self) -> float:

@@ -2,8 +2,12 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 
-class Heatmap:
+"""
+This file generates heatmaps based on what parts of the environment the drone explores for a single trajectory.
+"""
 
+
+class Heatmap:
     def __init__(self, field_size, scale):
         self.scale = scale
         self.grid = np.zeros(shape=(int(field_size[0] * scale), int(field_size[1] * scale)))

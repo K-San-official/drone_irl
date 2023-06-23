@@ -2,7 +2,14 @@ import random
 
 
 class Policy:
-
+    """
+    This class represents expert policies with pre-defined rules.
+    Available policies:
+        - Avoid All (avoid_a)
+        - Avoid Obstacles (avoid_o)
+        - Avoid People (avoid_p)
+        - Random Policy
+    """
     def __init__(self, pol_type):
         self.pol_type = pol_type
         self.wind = 0.08
@@ -44,7 +51,7 @@ class Policy:
 
     def get_action_avoid_people(self, sf):
         """
-        Returns an action that actively avoids people in the field.
+        Returns an action that actively avoids people in the environment.
         :param sf:
         :return:
         """
@@ -75,6 +82,11 @@ class Policy:
             return 'w'
 
     def get_action_avoid_obstacles(self, sf):
+        """
+        Returns an action that actively avoids obstacles in the environment.
+        :param sf:
+        :return:
+        """
         # With a certain percentage, execute random action
         x = random.random()
         if x <= self.wind:
@@ -101,53 +113,11 @@ class Policy:
         else:
             return 'w'
 
-    def get_action_avoid_obstacles_old(self, sf):
-        """
-        Returns an action that actively avoids obstacles in the field.
-        People are ignored.
-        :param sf:
-        :return:
-        """
-        # With a certain percentage, execute random action
-        x = random.random()
-        if x <= self.wind:
-            return self.get_action_random()
-        left_sum = 0
-        right_sum = 0
-        total_sum = sum(sf[int(len(sf) / 2) - 2:-2])
-        if total_sum > 5 or sf[15] > 0.97:
-            return 's'
-        if total_sum < 2 and sf[15] > 0.95:
-            rand_turn = random.random()
-            if rand_turn < 0.5:
-                return 'd'
-            else:
-                return 'a'
-        if total_sum < 1:
-            y = random.random()
-            if y < 0.6:
-                return 'w'
-            elif 0.6 <= y < 0.8:
-                return 'a'
-            else:
-                return 'd'
-        # Iterate over all obstacles detecting sensors
-        for i in range(int(len(sf) / 2) - 2):
-            if i <= 2:
-                left_sum += sf[i + 7]
-            if i >= 4:
-                right_sum += sf[i + 7]
-        # If the left sensors detect more, then turn right and vice-versa
-        if left_sum > right_sum:
-            return 'd'
-        else:
-            return 'a'
 
     def get_action_avoid_all(self, sf):
         """
         Returns an action that avoids both obstacles and people in the field.
         The rules that handle the trade-off between obstacle and people avoidance can be described as follows:
-        TODO: Describe policy in pseudo-rules
         :param sf:
         :return:
         """

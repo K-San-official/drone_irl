@@ -6,7 +6,7 @@ from trajectory_logger import TrajectoryLogger
 
 if __name__ == '__main__':
     """
-    This main function needs to be executed to start a new drone world simulation including GUI
+    This main function needs to be executed to start a new drone world simulation including GUI.
     """
 
     # Edit these variables to change the generation of the world:

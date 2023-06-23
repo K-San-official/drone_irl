@@ -2,21 +2,23 @@ from irl import *
 import utils
 from droneworld import DroneWorld
 
+# List of policy combinations tested against each other
 pol_comb = [
-    #['avoid_o', 'random'],
-    #['avoid_p', 'random'],
-    #['avoid_a', 'random'],
-    #['random', 'avoid_o'],
-    #['random', 'avoid_p'],
-    #['random', 'avoid_a'],
-    #['avoid_o', 'avoid_p'],
-    #['avoid_o', 'avoid_a'],
-    #['avoid_p', 'avoid_o'],
+    ['avoid_o', 'random'],
+    ['avoid_p', 'random'],
+    ['avoid_a', 'random'],
+    ['random', 'avoid_o'],
+    ['random', 'avoid_p'],
+    ['random', 'avoid_a'],
+    ['avoid_o', 'avoid_p'],
+    ['avoid_o', 'avoid_a'],
+    ['avoid_p', 'avoid_o'],
     ['avoid_p', 'avoid_a'],
-    ['avoid_a', 'avoid_p']#,
-    #['avoid_a', 'avoid_o']
+    ['avoid_a', 'avoid_p'],
+    ['avoid_a', 'avoid_o']
 ]
 
+# Change the following variables as desired
 irl_iterations = 50
 n_traj = 100
 n_traj_training = 20
@@ -24,7 +26,6 @@ n_steps = 250
 gamma = 0.99
 show_log = True
 generate_new_traj = True  # Flag that decides whether new trajectories should be recorded
-
 
 if __name__ == '__main__':
     # Iterate over all combinations of policies to generate results

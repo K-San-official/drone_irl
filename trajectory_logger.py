@@ -2,6 +2,9 @@ import os
 
 
 class TrajectoryLogger:
+    """
+    This class logs trajectories of state features of an agent in the droneworld environment.
+    """
 
     # Instance variables
     policy_type = 'not_defined'  # This value should be overridden once policy is set

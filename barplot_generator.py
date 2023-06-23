@@ -2,6 +2,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy import stats
 
+"""
+This file generates barplots for recorded reward weights of multiple IRL processes.
+Part of experiment 4.
+"""
+
 if __name__ == '__main__':
 
     # Import values from file
@@ -38,13 +43,9 @@ if __name__ == '__main__':
     # T-Test for absolute values
     arr_abs = np.abs(arr)
     abs_sum = np.sum(arr_abs, axis=0)  # Sum of absolute values for each reward weight
-    print('Original')
-    print(abs_sum)
+
     group_people = np.append(abs_sum[0:7], abs_sum[14])
     group_obst = np.append(abs_sum[7:14], abs_sum[15])
-    print('Groups')
-    print(group_people)
-    print(group_obst)
 
     print('-----')
     print(f'Mean Group People: {np.mean(group_people)}')
